@@ -1,0 +1,18 @@
+[application]
+name = "StudyBible"
+author = "StudyBible Team"
+
+[bundle]
+identifier = "com.studybible.app"
+
+[bundle.macos]
+name = "StudyBible"
+
+[bundle.windows]
+name = "StudyBible"
+
+[bundle.linux]
+name = "StudyBible"
+
+[build]
+default_platform = "desktop"

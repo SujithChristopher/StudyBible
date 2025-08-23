@@ -1,0 +1,615 @@
+{
+  "translations": [
+    {
+      "id": "tamil",
+      "name": "Tamil Bible",
+      "abbreviation": "TAMIL",
+      "language": "ta",
+      "language_name": null,
+      "description": "Tamil Bible Translation"
+    }
+  ],
+  "books": [
+    {
+      "id": 40,
+      "name": "Matthew",
+      "abbreviation": "Matt",
+      "testament": "NT",
+      "order_index": 40,
+      "chapter_count": 28,
+      "tamil_name": "மத்தேயு"
+    },
+    {
+      "id": 41,
+      "name": "Mark",
+      "abbreviation": "Mark",
+      "testament": "NT",
+      "order_index": 41,
+      "chapter_count": 16,
+      "tamil_name": "மாற்கு"
+    },
+    {
+      "id": 42,
+      "name": "Luke",
+      "abbreviation": "Luke",
+      "testament": "NT",
+      "order_index": 42,
+      "chapter_count": 24,
+      "tamil_name": "லூக்கா"
+    },
+    {
+      "id": 43,
+      "name": "John",
+      "abbreviation": "John",
+      "testament": "NT",
+      "order_index": 43,
+      "chapter_count": 21,
+      "tamil_name": "யோவான்"
+    },
+    {
+      "id": 44,
+      "name": "Acts",
+      "abbreviation": "Acts",
+      "testament": "NT",
+      "order_index": 44,
+      "chapter_count": 28,
+      "tamil_name": "அப்போஸ்தலருடைய நடபடிகள்"
+    },
+    {
+      "id": 45,
+      "name": "Romans",
+      "abbreviation": "Rom",
+      "testament": "NT",
+      "order_index": 45,
+      "chapter_count": 16,
+      "tamil_name": "ரோமர்"
+    },
+    {
+      "id": 46,
+      "name": "1 Corinthians",
+      "abbreviation": "1Cor",
+      "testament": "NT",
+      "order_index": 46,
+      "chapter_count": 16,
+      "tamil_name": "1 கொரிந்தியர்"
+    },
+    {
+      "id": 47,
+      "name": "2 Corinthians",
+      "abbreviation": "2Cor",
+      "testament": "NT",
+      "order_index": 47,
+      "chapter_count": 13,
+      "tamil_name": "2 கொரிந்தியர்"
+    },
+    {
+      "id": 48,
+      "name": "Galatians",
+      "abbreviation": "Gal",
+      "testament": "NT",
+      "order_index": 48,
+      "chapter_count": 6,
+      "tamil_name": "கலாத்தியர்"
+    },
+    {
+      "id": 49,
+      "name": "Ephesians",
+      "abbreviation": "Eph",
+      "testament": "NT",
+      "order_index": 49,
+      "chapter_count": 6,
+      "tamil_name": "எபேசியர்"
+    },
+    {
+      "id": 50,
+      "name": "Philippians",
+      "abbreviation": "Phil",
+      "testament": "NT",
+      "order_index": 50,
+      "chapter_count": 4,
+      "tamil_name": "பிலிப்பியர்"
+    },
+    {
+      "id": 51,
+      "name": "Colossians",
+      "abbreviation": "Col",
+      "testament": "NT",
+      "order_index": 51,
+      "chapter_count": 4,
+      "tamil_name": "கொலோசையர்"
+    },
+    {
+      "id": 52,
+      "name": "1 Thessalonians",
+      "abbreviation": "1Thess",
+      "testament": "NT",
+      "order_index": 52,
+      "chapter_count": 5,
+      "tamil_name": "1 தெசலோனிக்கேயர்"
+    },
+    {
+      "id": 53,
+      "name": "2 Thessalonians",
+      "abbreviation": "2Thess",
+      "testament": "NT",
+      "order_index": 53,
+      "chapter_count": 3,
+      "tamil_name": "2 தெசலோனிக்கேயர்"
+    },
+    {
+      "id": 54,
+      "name": "1 Timothy",
+      "abbreviation": "1Tim",
+      "testament": "NT",
+      "order_index": 54,
+      "chapter_count": 6,
+      "tamil_name": "1 தீமோத்தேயு"
+    },
+    {
+      "id": 55,
+      "name": "2 Timothy",
+      "abbreviation": "2Tim",
+      "testament": "NT",
+      "order_index": 55,
+      "chapter_count": 4,
+      "tamil_name": "2 தீமோத்தேயு"
+    },
+    {
+      "id": 56,
+      "name": "Titus",
+      "abbreviation": "Titus",
+      "testament": "NT",
+      "order_index": 56,
+      "chapter_count": 3,
+      "tamil_name": "தீத்து"
+    },
+    {
+      "id": 57,
+      "name": "Philemon",
+      "abbreviation": "Phlm",
+      "testament": "NT",
+      "order_index": 57,
+      "chapter_count": 1,
+      "tamil_name": "பிலேமோன்"
+    },
+    {
+      "id": 58,
+      "name": "Hebrews",
+      "abbreviation": "Heb",
+      "testament": "NT",
+      "order_index": 58,
+      "chapter_count": 13,
+      "tamil_name": "எபிரேயர்"
+    },
+    {
+      "id": 59,
+      "name": "James",
+      "abbreviation": "Jas",
+      "testament": "NT",
+      "order_index": 59,
+      "chapter_count": 5,
+      "tamil_name": "யாக்கோபு"
+    },
+    {
+      "id": 60,
+      "name": "1 Peter",
+      "abbreviation": "1Pet",
+      "testament": "NT",
+      "order_index": 60,
+      "chapter_count": 5,
+      "tamil_name": "1 பேதுரு"
+    },
+    {
+      "id": 61,
+      "name": "2 Peter",
+      "abbreviation": "2Pet",
+      "testament": "NT",
+      "order_index": 61,
+      "chapter_count": 3,
+      "tamil_name": "2 பேதுரு"
+    },
+    {
+      "id": 62,
+      "name": "1 John",
+      "abbreviation": "1John",
+      "testament": "NT",
+      "order_index": 62,
+      "chapter_count": 5,
+      "tamil_name": "1 யோவான்"
+    },
+    {
+      "id": 63,
+      "name": "2 John",
+      "abbreviation": "2John",
+      "testament": "NT",
+      "order_index": 63,
+      "chapter_count": 1,
+      "tamil_name": "2 யோவான்"
+    },
+    {
+      "id": 64,
+      "name": "3 John",
+      "abbreviation": "3John",
+      "testament": "NT",
+      "order_index": 64,
+      "chapter_count": 1,
+      "tamil_name": "3 யோவான்"
+    },
+    {
+      "id": 65,
+      "name": "Jude",
+      "abbreviation": "Jude",
+      "testament": "NT",
+      "order_index": 65,
+      "chapter_count": 1,
+      "tamil_name": "யூதா"
+    },
+    {
+      "id": 66,
+      "name": "Revelation",
+      "abbreviation": "Rev",
+      "testament": "NT",
+      "order_index": 66,
+      "chapter_count": 22,
+      "tamil_name": "வெளிப்படுத்தின விசேஷம்"
+    },
+    {
+      "id": 1,
+      "name": "Genesis",
+      "abbreviation": "Gen",
+      "testament": "OT",
+      "order_index": 1,
+      "chapter_count": 50,
+      "tamil_name": "ஆதியாகமம்"
+    },
+    {
+      "id": 2,
+      "name": "Exodus",
+      "abbreviation": "Exod",
+      "testament": "OT",
+      "order_index": 2,
+      "chapter_count": 40,
+      "tamil_name": "யாத்திராகமம்"
+    },
+    {
+      "id": 3,
+      "name": "Leviticus",
+      "abbreviation": "Lev",
+      "testament": "OT",
+      "order_index": 3,
+      "chapter_count": 27,
+      "tamil_name": "லேவியராகமம்"
+    },
+    {
+      "id": 4,
+      "name": "Numbers",
+      "abbreviation": "Num",
+      "testament": "OT",
+      "order_index": 4,
+      "chapter_count": 36,
+      "tamil_name": "எண்ணாகமம்"
+    },
+    {
+      "id": 5,
+      "name": "Deuteronomy",
+      "abbreviation": "Deut",
+      "testament": "OT",
+      "order_index": 5,
+      "chapter_count": 34,
+      "tamil_name": "உபாகமம்"
+    },
+    {
+      "id": 6,
+      "name": "Joshua",
+      "abbreviation": "Josh",
+      "testament": "OT",
+      "order_index": 6,
+      "chapter_count": 24,
+      "tamil_name": "யோசுவா"
+    },
+    {
+      "id": 7,
+      "name": "Judges",
+      "abbreviation": "Judg",
+      "testament": "OT",
+      "order_index": 7,
+      "chapter_count": 21,
+      "tamil_name": "நியாயாதிபதிகள்"
+    },
+    {
+      "id": 8,
+      "name": "Ruth",
+      "abbreviation": "Ruth",
+      "testament": "OT",
+      "order_index": 8,
+      "chapter_count": 4,
+      "tamil_name": "ரூத்"
+    },
+    {
+      "id": 9,
+      "name": "1 Samuel",
+      "abbreviation": "1Sam",
+      "testament": "OT",
+      "order_index": 9,
+      "chapter_count": 31,
+      "tamil_name": "1 சாமுவேல்"
+    },
+    {
+      "id": 10,
+      "name": "2 Samuel",
+      "abbreviation": "2Sam",
+      "testament": "OT",
+      "order_index": 10,
+      "chapter_count": 24,
+      "tamil_name": "2 சாமுவேல்"
+    },
+    {
+      "id": 11,
+      "name": "1 Kings",
+      "abbreviation": "1Kgs",
+      "testament": "OT",
+      "order_index": 11,
+      "chapter_count": 22,
+      "tamil_name": "1 ராஜாக்கள்"
+    },
+    {
+      "id": 12,
+      "name": "2 Kings",
+      "abbreviation": "2Kgs",
+      "testament": "OT",
+      "order_index": 12,
+      "chapter_count": 25,
+      "tamil_name": "2 ராஜாக்கள்"
+    },
+    {
+      "id": 13,
+      "name": "1 Chronicles",
+      "abbreviation": "1Chr",
+      "testament": "OT",
+      "order_index": 13,
+      "chapter_count": 29,
+      "tamil_name": "1 நாளாகமம்"
+    },
+    {
+      "id": 14,
+      "name": "2 Chronicles",
+      "abbreviation": "2Chr",
+      "testament": "OT",
+      "order_index": 14,
+      "chapter_count": 36,
+      "tamil_name": "2 நாளாகமம்"
+    },
+    {
+      "id": 15,
+      "name": "Ezra",
+      "abbreviation": "Ezra",
+      "testament": "OT",
+      "order_index": 15,
+      "chapter_count": 10,
+      "tamil_name": "எஸ்றா"
+    },
+    {
+      "id": 16,
+      "name": "Nehemiah",
+      "abbreviation": "Neh",
+      "testament": "OT",
+      "order_index": 16,
+      "chapter_count": 13,
+      "tamil_name": "நெகேமியா"
+    },
+    {
+      "id": 17,
+      "name": "Esther",
+      "abbreviation": "Esth",
+      "testament": "OT",
+      "order_index": 17,
+      "chapter_count": 10,
+      "tamil_name": "எஸ்தர்"
+    },
+    {
+      "id": 18,
+      "name": "Job",
+      "abbreviation": "Job",
+      "testament": "OT",
+      "order_index": 18,
+      "chapter_count": 42,
+      "tamil_name": "யோபு"
+    },
+    {
+      "id": 19,
+      "name": "Psalms",
+      "abbreviation": "Ps",
+      "testament": "OT",
+      "order_index": 19,
+      "chapter_count": 150,
+      "tamil_name": "சங்கீதங்கள்"
+    },
+    {
+      "id": 20,
+      "name": "Proverbs",
+      "abbreviation": "Prov",
+      "testament": "OT",
+      "order_index": 20,
+      "chapter_count": 31,
+      "tamil_name": "நீதிமொழிகள்"
+    },
+    {
+      "id": 21,
+      "name": "Ecclesiastes",
+      "abbreviation": "Eccl",
+      "testament": "OT",
+      "order_index": 21,
+      "chapter_count": 12,
+      "tamil_name": "பிரசங்கி"
+    },
+    {
+      "id": 22,
+      "name": "Song of Solomon",
+      "abbreviation": "Song",
+      "testament": "OT",
+      "order_index": 22,
+      "chapter_count": 8,
+      "tamil_name": "உன்னதப்பாட்டு"
+    },
+    {
+      "id": 23,
+      "name": "Isaiah",
+      "abbreviation": "Isa",
+      "testament": "OT",
+      "order_index": 23,
+      "chapter_count": 66,
+      "tamil_name": "ஏசாயா"
+    },
+    {
+      "id": 24,
+      "name": "Jeremiah",
+      "abbreviation": "Jer",
+      "testament": "OT",
+      "order_index": 24,
+      "chapter_count": 52,
+      "tamil_name": "எரேமியா"
+    },
+    {
+      "id": 25,
+      "name": "Lamentations",
+      "abbreviation": "Lam",
+      "testament": "OT",
+      "order_index": 25,
+      "chapter_count": 5,
+      "tamil_name": "புலம்பல்"
+    },
+    {
+      "id": 26,
+      "name": "Ezekiel",
+      "abbreviation": "Ezek",
+      "testament": "OT",
+      "order_index": 26,
+      "chapter_count": 48,
+      "tamil_name": "எசேக்கியேல்"
+    },
+    {
+      "id": 27,
+      "name": "Daniel",
+      "abbreviation": "Dan",
+      "testament": "OT",
+      "order_index": 27,
+      "chapter_count": 12,
+      "tamil_name": "தானியேல்"
+    },
+    {
+      "id": 28,
+      "name": "Hosea",
+      "abbreviation": "Hos",
+      "testament": "OT",
+      "order_index": 28,
+      "chapter_count": 14,
+      "tamil_name": "ஓசியா"
+    },
+    {
+      "id": 29,
+      "name": "Joel",
+      "abbreviation": "Joel",
+      "testament": "OT",
+      "order_index": 29,
+      "chapter_count": 3,
+      "tamil_name": "யோவேல்"
+    },
+    {
+      "id": 30,
+      "name": "Amos",
+      "abbreviation": "Amos",
+      "testament": "OT",
+      "order_index": 30,
+      "chapter_count": 9,
+      "tamil_name": "ஆமோஸ்"
+    },
+    {
+      "id": 31,
+      "name": "Obadiah",
+      "abbreviation": "Obad",
+      "testament": "OT",
+      "order_index": 31,
+      "chapter_count": 1,
+      "tamil_name": "ஒபதியா"
+    },
+    {
+      "id": 32,
+      "name": "Jonah",
+      "abbreviation": "Jonah",
+      "testament": "OT",
+      "order_index": 32,
+      "chapter_count": 4,
+      "tamil_name": "யோனா"
+    },
+    {
+      "id": 33,
+      "name": "Micah",
+      "abbreviation": "Mic",
+      "testament": "OT",
+      "order_index": 33,
+      "chapter_count": 7,
+      "tamil_name": "மீகா"
+    },
+    {
+      "id": 34,
+      "name": "Nahum",
+      "abbreviation": "Nah",
+      "testament": "OT",
+      "order_index": 34,
+      "chapter_count": 3,
+      "tamil_name": "நாகூம்"
+    },
+    {
+      "id": 35,
+      "name": "Habakkuk",
+      "abbreviation": "Hab",
+      "testament": "OT",
+      "order_index": 35,
+      "chapter_count": 3,
+      "tamil_name": "அபக்கூக்"
+    },
+    {
+      "id": 36,
+      "name": "Zephaniah",
+      "abbreviation": "Zeph",
+      "testament": "OT",
+      "order_index": 36,
+      "chapter_count": 3,
+      "tamil_name": "செப்பனியா"
+    },
+    {
+      "id": 37,
+      "name": "Haggai",
+      "abbreviation": "Hag",
+      "testament": "OT",
+      "order_index": 37,
+      "chapter_count": 2,
+      "tamil_name": "ஆகாய்"
+    },
+    {
+      "id": 38,
+      "name": "Zechariah",
+      "abbreviation": "Zech",
+      "testament": "OT",
+      "order_index": 38,
+      "chapter_count": 14,
+      "tamil_name": "சகரியா"
+    },
+    {
+      "id": 39,
+      "name": "Malachi",
+      "abbreviation": "Mal",
+      "testament": "OT",
+      "order_index": 39,
+      "chapter_count": 4,
+      "tamil_name": "மல்கியா"
+    }
+  ],
+  "metadata": {
+    "format_version": "1.0",
+    "database_path": "unified_bible.db",
+    "total_translations": 1,
+    "total_books": 66,
+    "total_verses": 31102
+  }
+}

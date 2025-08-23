@@ -1,0 +1,10 @@
+{
+  "translation": "tamil",
+  "name": "Tamil Bible",
+  "abbreviation": "TAMIL",
+  "language": "ta",
+  "description": "Tamil Bible Translation",
+  "created_at": "2024-01-01T00:00:00Z",
+  "total_books": 66,
+  "total_verses": 31102
+}

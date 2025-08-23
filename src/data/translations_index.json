@@ -1,0 +1,44 @@
+{
+  "translations": [
+    {
+      "id": "kjv",
+      "name": "King James Version",
+      "abbreviation": "KJV",
+      "language": "en",
+      "language_name": "English",
+      "description": "The King James Version of the Bible",
+      "bundled": true,
+      "priority": 1
+    },
+    {
+      "id": "tamil",
+      "name": "Tamil Bible",
+      "abbreviation": "TAMIL",
+      "language": "ta",
+      "language_name": "தமிழ்",
+      "description": "Tamil Bible Translation",
+      "bundled": true,
+      "priority": 2
+    },
+    {
+      "id": "niv",
+      "name": "New International Version",
+      "abbreviation": "NIV",
+      "language": "en",
+      "language_name": "English",
+      "description": "New International Version of the Bible",
+      "bundled": false,
+      "priority": 3
+    },
+    {
+      "id": "nkjv",
+      "name": "New King James Version",
+      "abbreviation": "NKJV",
+      "language": "en",
+      "language_name": "English",
+      "description": "New King James Version of the Bible",
+      "bundled": false,
+      "priority": 4
+    }
+  ]
+}
