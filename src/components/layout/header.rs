@@ -3,8 +3,6 @@ use crate::types::*;
 
 #[component]
 pub fn Header(
-    is_dark: bool,
-    set_is_dark: EventHandler<bool>,
     is_sidebar_open: bool,
     set_is_sidebar_open: EventHandler<bool>,
     search_query: String,
@@ -22,10 +20,12 @@ pub fn Header(
     on_zoom_in: EventHandler<()>,
     on_zoom_out: EventHandler<()>,
     on_reset_zoom: EventHandler<()>,
+    is_dark: bool,
+    set_is_dark: EventHandler<bool>,
 ) -> Element {
     rsx! {
         header {
-            class: "sticky top-0 z-50 w-full bg-secondary border-primary border-b backdrop-blur-xl theme-transition",
+            class: "sticky top-0 z-40 w-full bg-secondary border-primary border-b backdrop-blur-xl theme-transition flex-shrink-0",
             
             div {
                 class: "flex h-20 items-center px-4 sm:px-6",
@@ -117,6 +117,16 @@ pub fn Header(
                             div {
                                 class: "absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-blue-500",
                                 "🔍"
+                            }
+                            if !search_query.is_empty() {
+                                button {
+                                    class: "absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors",
+                                    onclick: move |_| {
+                                        set_search_query.call(String::new());
+                                    },
+                                    title: "Clear search",
+                                    "✕"
+                                }
                             }
                             input {
                                 r#type: "search",

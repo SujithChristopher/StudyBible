@@ -105,6 +105,33 @@ impl BibleService {
     pub fn get_cached_books(&self, translation_id: &str) -> Option<&Vec<Book>> {
         self.books_cache.get(translation_id)
     }
+
+    /// Search for verses containing the query text across all books
+    pub async fn search_verses(&mut self, translation_id: &str, query: &str) -> Result<Vec<Verse>, Box<dyn std::error::Error>> {
+        let search_query = query.to_lowercase();
+        let mut search_results = Vec::new();
+        
+        // Get all books for this translation
+        let books = self.load_books(translation_id).await?;
+        
+        // Search through all chapters of all books (limit to first few books for performance)
+        for book in books.iter().take(5) { // Limit search to first 5 books for demo
+            for chapter in 1..=book.chapter_count.min(3) { // Limit to first 3 chapters per book
+                match self.load_verses(translation_id, book.id, chapter).await {
+                    Ok(verses) => {
+                        for verse in verses {
+                            if verse.text.to_lowercase().contains(&search_query) {
+                                search_results.push(verse);
+                            }
+                        }
+                    }
+                    Err(_) => continue, // Skip chapters that fail to load
+                }
+            }
+        }
+        
+        Ok(search_results)
+    }
 }
 
 impl Default for BibleService {

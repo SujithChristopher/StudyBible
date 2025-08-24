@@ -4,7 +4,9 @@
       "WebSearch",
       "WebFetch(domain:dioxuslabs.com)",
       "WebFetch(domain:github.com)",
-      "Bash(cargo binstall:*)"
+      "Bash(cargo binstall:*)",
+      "Bash(dx serve:*)",
+      "Bash(java:*)"
     ],
     "deny": [],
     "ask": []

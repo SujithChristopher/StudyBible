@@ -15,6 +15,7 @@ pub fn Sidebar(
     on_open_bookmarks: EventHandler<()>,
     on_open_settings: EventHandler<()>,
 ) -> Element {
+    
     let is_old_testament = |book: &Book| book.testament == Testament::OT;
     let is_new_testament = |book: &Book| book.testament == Testament::NT;
 
@@ -23,11 +24,11 @@ pub fn Sidebar(
 
     rsx! {
         aside {
-            class: format!("fixed left-0 z-40 w-72 bg-secondary border-primary border-r transition-transform duration-300 ease-out h-[calc(100vh-5rem)] top-20 {}",
+            class: format!("w-72 h-screen bg-secondary border-r border-primary flex-shrink-0 {}",
                 if is_sidebar_open {
-                    "translate-x-0"
+                    "fixed lg:relative z-40 lg:z-auto"
                 } else {
-                    "-translate-x-full"
+                    "hidden lg:block"
                 }
             ),
             
@@ -62,7 +63,7 @@ pub fn Sidebar(
 
                 // Books Section
                 div {
-                    class: "flex-1 overflow-y-auto p-6 min-h-0",
+                    class: "flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent p-6",
                     nav {
                         class: "space-y-6",
                         
