@@ -34,6 +34,9 @@ fn App() -> Element {
     // UI state
     let mut zoom_level = use_signal(|| 1.0);
     let mut is_parallel_view = use_signal(|| false);
+    let mut is_parallel_by_columns = use_signal(|| true);
+    let mut secondary_translation = use_signal(|| None::<Translation>);
+    let mut secondary_verses = use_signal(|| Vec::<Verse>::new());
     let mut search_query = use_signal(|| String::new());
     
     // Initialize data on startup
@@ -213,7 +216,35 @@ fn App() -> Element {
                         let current = *is_parallel_view.read();
                         is_parallel_view.set(!current);
                     },
-                    has_secondary_translation: false,
+                    has_secondary_translation: true,
+                    secondary_translation: secondary_translation.read().clone(),
+                    on_select_secondary_translation: move |tid: String| {
+                        if tid.is_empty() {
+                            secondary_translation.set(None);
+                            secondary_verses.set(Vec::new());
+                        } else {
+                            if let Some(book) = &*selected_book.read() {
+                                let ch = *selected_chapter.read();
+                                let bid = book.id;
+                                let tid_clone = tid.clone();
+                                spawn(async move {
+                                    let mut svc = BibleService::new();
+                                    match svc.load_verses(&tid_clone, bid, ch).await {
+                                        Ok(vs) => secondary_verses.set(vs),
+                                        Err(_) => secondary_verses.set(Vec::new()),
+                                    }
+                                });
+                            }
+                            if let Some(t) = translations.read().iter().find(|t| t.id == tid).cloned() {
+                                secondary_translation.set(Some(t));
+                            }
+                        }
+                    },
+                    is_parallel_by_columns: *is_parallel_by_columns.read(),
+                    on_toggle_parallel_layout: move |_| {
+                        let v = *is_parallel_by_columns.read();
+                        is_parallel_by_columns.set(!v);
+                    },
                     selected_book: selected_book.read().clone(),
                     selected_chapter: *selected_chapter.read(),
                     selected_translation: selected_translation.read().clone(),
@@ -320,7 +351,7 @@ fn App() -> Element {
                     main {
                         class: "flex-1 overflow-auto bg-secondary theme-transition",
                         div {
-                            class: "max-w-4xl mx-auto p-8",
+                            class: format!("{} mx-auto p-8", if *is_parallel_view.read() && *is_parallel_by_columns.read() { "max-w-6xl" } else { "max-w-4xl" }),
                             
                             if let Some(book) = &*selected_book.read() {
                                 div {
@@ -341,19 +372,39 @@ fn App() -> Element {
                                     
                                     // Verses
                                     div {
-                                        class: "space-y-4",
+                                        class: if *is_parallel_view.read() && *is_parallel_by_columns.read() { "grid grid-cols-1 md:grid-cols-2 gap-6" } else { "space-y-4" },
                                         style: format!("font-size: {}rem; line-height: 1.6;", 1.125 * *zoom_level.read()),
-                                        for verse in verses.read().iter() {
-                                            div {
-                                                key: "{verse.id}",
-                                                class: "flex gap-4 items-start group hover:bg-tertiary rounded-lg p-4 transition-colors theme-transition bg-secondary",
-                                                div {
-                                                    class: "flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center text-sm font-bold",
-                                                    "{verse.verse}"
+                                        if *is_parallel_view.read() && *is_parallel_by_columns.read() {
+                                            // Two columns, align by verse index
+                                            div { class: "space-y-4",
+                                                for verse in verses.read().iter() {
+                                                    div { class: "flex gap-3 items-start bg-secondary rounded-lg p-3", key: "l-{verse.id}",
+                                                        div { class: "w-6 h-6 bg-blue-500 text-white rounded flex items-center justify-center text-xs font-bold", "{verse.verse}" }
+                                                        p { class: "text-primary", "{verse.text}" }
+                                                    }
                                                 }
-                                                p {
-                                                    class: "text-primary leading-relaxed",
-                                                    "{verse.text}"
+                                            }
+                                            div { class: "space-y-4",
+                                                for verse in secondary_verses.read().iter() {
+                                                    div { class: "flex gap-3 items-start bg-secondary rounded-lg p-3", key: "r-{verse.id}",
+                                                        div { class: "w-6 h-6 bg-purple-500 text-white rounded flex items-center justify-center text-xs font-bold", "{verse.verse}" }
+                                                        p { class: "text-primary", "{verse.text}" }
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            for verse in verses.read().iter() {
+                                                div {
+                                                    key: "{verse.id}",
+                                                    class: "flex gap-4 items-start group hover:bg-tertiary rounded-lg p-4 transition-colors theme-transition bg-secondary",
+                                                    div {
+                                                        class: "flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center text-sm font-bold",
+                                                        "{verse.verse}"
+                                                    }
+                                                    p {
+                                                        class: "text-primary leading-relaxed",
+                                                        "{verse.text}"
+                                                    }
                                                 }
                                             }
                                         }

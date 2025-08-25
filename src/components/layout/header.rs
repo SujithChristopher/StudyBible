@@ -11,6 +11,10 @@ pub fn Header(
     is_parallel_view: bool,
     on_toggle_parallel_view: EventHandler<()>,
     has_secondary_translation: bool,
+    secondary_translation: Option<Translation>,
+    on_select_secondary_translation: EventHandler<String>,
+    is_parallel_by_columns: bool,
+    on_toggle_parallel_layout: EventHandler<()>,
     selected_book: Option<Book>,
     selected_chapter: u32,
     selected_translation: Option<Translation>,
@@ -98,6 +102,22 @@ pub fn Header(
                         }
                     }
                     
+                    // Secondary translation selector (shown when parallel available)
+                    if has_secondary_translation {
+                        select {
+                            class: format!("hidden md:block px-2 py-1 rounded border text-sm {}",
+                                if is_dark { "bg-gray-800 border-gray-700 text-gray-100" } else { "bg-white border-gray-300 text-gray-900" }
+                            ),
+                            value: secondary_translation.as_ref().map(|t| t.id.as_str()).unwrap_or(""),
+                            onchange: move |evt| on_select_secondary_translation.call(evt.value()),
+                            option { value: "", "Single" }
+                            option { value: "kjv", "KJV" }
+                            option { value: "tamil", "Tamil" }
+                            option { value: "niv", "NIV" }
+                            option { value: "nkjv", "NKJV" }
+                        }
+                    }
+
                     // Logo and title
                     div {
                         class: "flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white shadow-xl",
@@ -253,6 +273,16 @@ pub fn Header(
                                 span {
                                     class: "hidden md:inline text-sm",
                                     if is_parallel_view { "Single View" } else { "Parallel View" }
+                                }
+                            }
+                            // Layout toggle
+                            if is_parallel_view {
+                                button {
+                                    class: format!("px-3 py-2 rounded-lg text-sm {}",
+                                        if is_dark { "bg-gray-800 text-gray-300 hover:bg-gray-700" } else { "bg-gray-100 text-gray-700 hover:bg-gray-200" }
+                                    ),
+                                    onclick: move |_| on_toggle_parallel_layout.call(()),
+                                    if is_parallel_by_columns { "Columns" } else { "Rows" }
                                 }
                             }
                         }
