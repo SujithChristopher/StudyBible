@@ -23,7 +23,7 @@ pub fn Sidebar(
         // Clean vertical sidebar
         aside {
             class: format!(
-                "w-80 h-screen bg-gray-100 dark:bg-gray-800 border-r border-gray-300 dark:border-gray-600 flex flex-col {}",
+                "w-80 h-screen bg-secondary border-r border-primary flex flex-col theme-transition {}",
                 if is_sidebar_open {
                     "fixed lg:relative z-40 lg:z-auto"
                 } else {
@@ -33,7 +33,7 @@ pub fn Sidebar(
             
             // Header with translation selector
             div {
-                class: "p-4 border-b border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900",
+                class: "p-4 border-b border-primary bg-secondary theme-transition",
                 div {
                     class: "space-y-3",
                     
@@ -60,7 +60,7 @@ pub fn Sidebar(
             
             // Scrollable books section
             div {
-                class: "flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-700",
+                class: "flex-1 overflow-y-auto bg-secondary theme-transition",
                 
                 // Old Testament section
                 if !old_testament_books.is_empty() {

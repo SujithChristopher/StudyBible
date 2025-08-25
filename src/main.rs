@@ -124,13 +124,16 @@ fn App() -> Element {
         document::Link { rel: "stylesheet", href: asset!("assets/tailwind.css") }
         document::Link { rel: "stylesheet", href: asset!("assets/main.css") }
         
-        div { 
-            class: format!("min-h-screen flex bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 {}", 
-                if *is_dark_theme.read() { "dark" } else { "" }
-            ),
-            
-            // Sidebar
-            Sidebar {
+        // Dark mode scope wrapper so all children inherit `.dark`
+        div {
+            class: if *is_dark_theme.read() { "dark" } else { "" },
+
+            // App root container
+            div { 
+                class: "min-h-screen flex bg-primary text-primary theme-transition",
+
+                // Sidebar
+                Sidebar {
                 is_sidebar_open: *is_sidebar_open.read(),
                 is_dark: *is_dark_theme.read(),
                 books: books.read().clone(),
@@ -142,19 +145,19 @@ fn App() -> Element {
                 on_select_translation: move |id: String| on_translation_select(id),
                 on_open_bookmarks: move |_| {},
                 on_open_settings: move |_| {}
-            }
-
-            // Mobile sidebar overlay
-            if *is_sidebar_open.read() {
-                div {
-                    class: "fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden",
-                    onclick: move |_| is_sidebar_open.set(false)
                 }
-            }
 
-            // Main content area
-            div {
-                class: "flex-1 flex flex-col",
+                // Mobile sidebar overlay
+                if *is_sidebar_open.read() {
+                    div {
+                        class: "fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden",
+                        onclick: move |_| is_sidebar_open.set(false)
+                    }
+                }
+
+                // Main content area
+                div {
+                    class: "flex-1 flex flex-col",
                 
                 // Header
                 Header {
@@ -213,7 +216,7 @@ fn App() -> Element {
                 // Main content
                 else {
                     main {
-                        class: "flex-1 overflow-auto bg-white dark:bg-gray-900",
+                        class: "flex-1 overflow-auto bg-secondary theme-transition",
                         div {
                             class: "max-w-4xl mx-auto p-8",
                             
@@ -221,14 +224,14 @@ fn App() -> Element {
                                 div {
                                     // Chapter header
                                     div {
-                                        class: "mb-8 pb-6 border-b border-gray-200 dark:border-gray-700",
+                                        class: "mb-8 pb-6 border-b border-primary",
                                         h1 {
-                                            class: "text-3xl font-bold text-gray-900 dark:text-white mb-2",
+                                            class: "text-3xl font-bold text-primary mb-2",
                                             "{book.name} {selected_chapter.read()}"
                                         }
                                         if let Some(translation) = &*selected_translation.read() {
                                             p {
-                                                class: "text-gray-600 dark:text-gray-400",
+                                                class: "text-secondary",
                                                 "{translation.name}"
                                             }
                                         }
@@ -241,13 +244,13 @@ fn App() -> Element {
                                         for verse in verses.read().iter() {
                                             div {
                                                 key: "{verse.id}",
-                                                class: "flex gap-4 items-start group hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg p-4 transition-colors",
+                                                class: "flex gap-4 items-start group hover:bg-tertiary rounded-lg p-4 transition-colors theme-transition",
                                                 div {
                                                     class: "flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center text-sm font-bold",
                                                     "{verse.verse}"
                                                 }
                                                 p {
-                                                    class: "text-gray-800 dark:text-gray-200 leading-relaxed",
+                                                    class: "text-primary leading-relaxed",
                                                     "{verse.text}"
                                                 }
                                             }
@@ -269,6 +272,7 @@ fn App() -> Element {
                             }
                         }
                     }
+                }
                 }
             }
         }

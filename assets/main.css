@@ -13,7 +13,7 @@
   --border-secondary: #d1d5db;
 }
 
-.theme-dark {
+.dark {
   --bg-primary: #111827;
   --bg-secondary: #1f2937;
   --bg-tertiary: #374151;
@@ -62,7 +62,7 @@
   background-color: rgba(156, 163, 175, 0.7);
 }
 
-.theme-dark .scrollbar-thin::-webkit-scrollbar-thumb {
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
   background-color: rgba(75, 85, 99, 0.7);
 }
 
