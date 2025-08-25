@@ -144,7 +144,11 @@ fn App() -> Element {
                 on_select_book: move |book: Book| on_book_select(book),
                 on_select_translation: move |id: String| on_translation_select(id),
                 on_open_bookmarks: move |_| {},
-                on_open_settings: move |_| {}
+                on_open_settings: move |_| {},
+                on_toggle_sidebar: move |_| {
+                    let current = *is_sidebar_open.read();
+                    is_sidebar_open.set(!current)
+                }
                 }
 
                 // Mobile sidebar overlay

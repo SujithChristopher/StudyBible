@@ -14,6 +14,7 @@ pub fn Sidebar(
     on_select_translation: EventHandler<String>,
     on_open_bookmarks: EventHandler<()>,
     on_open_settings: EventHandler<()>,
+    on_toggle_sidebar: EventHandler<()>,
 ) -> Element {
     // Separate books by testament
     let old_testament_books: Vec<&Book> = books.iter().filter(|book| book.testament == Testament::OT).collect();
@@ -23,19 +24,28 @@ pub fn Sidebar(
         // Clean vertical sidebar
         aside {
             class: format!(
-                "w-80 h-screen bg-secondary border-r border-primary flex flex-col theme-transition {}",
+                "w-80 h-screen bg-secondary border-r border-primary flex flex-col theme-transition lg:sticky lg:top-0 {}",
                 if is_sidebar_open {
-                    "fixed lg:relative z-40 lg:z-auto"
+                    // Mobile: slide-over overlay; Desktop: static sticky sidebar
+                    "fixed inset-y-0 left-0 w-80 z-40 lg:static"
                 } else {
-                    "hidden lg:flex"
+                    // Closed on mobile, visible as block on desktop
+                    "hidden lg:block"
                 }
             ),
             
-            // Header with translation selector
+            // Header with translation selector and collapse button
             div {
-                class: "p-4 border-b border-primary bg-secondary theme-transition",
+                class: "p-4 border-b border-primary bg-secondary theme-transition flex items-center gap-3",
+                // Collapse button (desktop and mobile)
+                button {
+                    class: if is_dark { "p-2 rounded-lg hover:bg-tertiary text-secondary" } else { "p-2 rounded-lg hover:bg-tertiary text-secondary" },
+                    title: if is_sidebar_open { "Hide sidebar" } else { "Show sidebar" },
+                    onclick: move |_| on_toggle_sidebar.call(()),
+                    "✕"
+                }
                 div {
-                    class: "space-y-3",
+                    class: "space-y-3 grow",
                     
                     label {
                         class: "block text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-gray-300",
