@@ -22,6 +22,7 @@ pub fn Header(
     on_reset_zoom: EventHandler<()>,
     is_dark: bool,
     set_is_dark: EventHandler<bool>,
+    on_select_chapter: EventHandler<u32>,
 ) -> Element {
     rsx! {
         header {
@@ -39,6 +40,14 @@ pub fn Header(
                     } else {
                         "☰"
                     }
+                }
+
+                // Desktop sidebar toggle
+                button {
+                    class: "mr-4 hidden lg:inline-flex p-2 rounded-lg bg-tertiary hover:bg-accent-secondary text-primary theme-transition",
+                    onclick: move |_| set_is_sidebar_open.call(!is_sidebar_open),
+                    title: if is_sidebar_open { "Hide sidebar" } else { "Show sidebar" },
+                    if is_sidebar_open { "⟨" } else { "☰" }
                 }
 
                 // Chapter navigation (desktop)
@@ -69,6 +78,23 @@ pub fn Header(
                             title: "Next chapter", 
                             onclick: move |_| on_next_chapter.call(()),
                             "▶"
+                        }
+                    }
+                    // Chapter dropdown
+                    if let Some(book) = &selected_book {
+                        select {
+                            class: format!("hidden md:block px-2 py-1 rounded border text-sm {}",
+                                if is_dark { "bg-gray-800 border-gray-700 text-gray-100" } else { "bg-white border-gray-300 text-gray-900" }
+                            ),
+                            value: "{selected_chapter}",
+                            onchange: move |evt| {
+                                if let Ok(ch) = evt.value().parse::<u32>() {
+                                    on_select_chapter.call(ch);
+                                }
+                            },
+                            for ch in 1..=book.chapter_count {
+                                option { value: "{ch}", "{ch}" }
+                            }
                         }
                     }
                     

@@ -29,8 +29,8 @@ pub fn Sidebar(
                     // Mobile: slide-over overlay; Desktop: static sticky sidebar
                     "fixed inset-y-0 left-0 w-80 z-40 lg:static"
                 } else {
-                    // Closed on mobile, visible as block on desktop
-                    "hidden lg:block"
+                    // Closed on all sizes
+                    "hidden"
                 }
             ),
             

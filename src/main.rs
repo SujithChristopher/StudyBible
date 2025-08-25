@@ -111,6 +111,17 @@ fn App() -> Element {
                         if let Some(first_book) = books_list.first() {
                             selected_book.set(Some(first_book.clone()));
                             selected_chapter.set(1);
+                            // Load verses for the newly selected translation/book
+                            let tid = translation_id.clone();
+                            let bid = first_book.id;
+                            let ch = 1u32;
+                            spawn(async move {
+                                let mut svc = BibleService::new();
+                                match svc.load_verses(&tid, bid, ch).await {
+                                    Ok(vs) => verses.set(vs),
+                                    Err(e) => load_error.set(Some(format!("{}", e))),
+                                }
+                            });
                         }
                     }
                     Err(e) => load_error.set(Some(format!("Failed to load books: {}", e))),
@@ -169,7 +180,34 @@ fn App() -> Element {
                     set_is_sidebar_open: move |open: bool| is_sidebar_open.set(open),
                     search_query: search_query.read().clone(),
                     set_search_query: move |query: String| search_query.set(query),
-                    on_search: move |_| {},
+                    on_search: move |_| {
+                        let trans_id_opt = selected_translation.read().as_ref().map(|t| t.id.clone());
+                        let q = search_query.read().clone();
+                        let books_snapshot = books.read().clone();
+                        if let Some(tid) = trans_id_opt {
+                            if !q.trim().is_empty() {
+                                spawn(async move {
+                                    let mut bible_service = BibleService::new();
+                                    match bible_service.search_verses(&tid, &q).await {
+                                        Ok(results) => {
+                                            if let Some(v) = results.first() {
+                                                if let Some(book) = books_snapshot.iter().find(|b| b.id == v.book_id).cloned() {
+                                                    selected_book.set(Some(book.clone()));
+                                                    selected_chapter.set(v.chapter);
+                                                    let mut svc = BibleService::new();
+                                                    match svc.load_verses(&tid, v.book_id, v.chapter).await {
+                                                        Ok(list) => verses.set(list),
+                                                        Err(err) => load_error.set(Some(format!("{}", err))),
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Err(e) => load_error.set(Some(format!("Search failed: {}", e))),
+                                    }
+                                });
+                            }
+                        }
+                    },
                     is_parallel_view: *is_parallel_view.read(),
                     on_toggle_parallel_view: move |_| {
                         let current = *is_parallel_view.read();
@@ -179,8 +217,50 @@ fn App() -> Element {
                     selected_book: selected_book.read().clone(),
                     selected_chapter: *selected_chapter.read(),
                     selected_translation: selected_translation.read().clone(),
-                    on_prev_chapter: move |_| {},
-                    on_next_chapter: move |_| {},
+                    on_prev_chapter: move |_| {
+                        if let Some(book) = &*selected_book.read() {
+                            let current = *selected_chapter.read();
+                            if current > 1 {
+                                let new_ch = current - 1;
+                                selected_chapter.set(new_ch);
+                                if let Some(trans) = &*selected_translation.read() {
+                                    let tid = trans.id.clone();
+                                    let bid = book.id;
+                                    let mut verses_sig = verses.clone();
+                                    let mut load_err = load_error.clone();
+                                    spawn(async move {
+                                        let mut svc = BibleService::new();
+                                        match svc.load_verses(&tid, bid, new_ch).await {
+                                            Ok(vs) => verses_sig.set(vs),
+                                            Err(e) => load_err.set(Some(format!("{}", e))),
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    },
+                    on_next_chapter: move |_| {
+                        if let Some(book) = &*selected_book.read() {
+                            let current = *selected_chapter.read();
+                            if current < book.chapter_count {
+                                let new_ch = current + 1;
+                                selected_chapter.set(new_ch);
+                                if let Some(trans) = &*selected_translation.read() {
+                                    let tid = trans.id.clone();
+                                    let bid = book.id;
+                                    let mut verses_sig = verses.clone();
+                                    let mut load_err = load_error.clone();
+                                    spawn(async move {
+                                        let mut svc = BibleService::new();
+                                        match svc.load_verses(&tid, bid, new_ch).await {
+                                            Ok(vs) => verses_sig.set(vs),
+                                            Err(e) => load_err.set(Some(format!("{}", e))),
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    },
                     zoom_level: *zoom_level.read(),
                     on_zoom_in: move |_| {
                         let current = *zoom_level.read();
@@ -192,7 +272,25 @@ fn App() -> Element {
                     },
                     on_reset_zoom: move |_| zoom_level.set(1.0),
                     is_dark: *is_dark_theme.read(),
-                    set_is_dark: move |dark: bool| is_dark_theme.set(dark)
+                    set_is_dark: move |dark: bool| is_dark_theme.set(dark),
+                    on_select_chapter: move |ch: u32| {
+                        if let Some(book) = &*selected_book.read() {
+                            if ch >= 1 && ch <= book.chapter_count {
+                                selected_chapter.set(ch);
+                                if let Some(trans) = &*selected_translation.read() {
+                                    let tid = trans.id.clone();
+                                    let bid = book.id;
+                                    spawn(async move {
+                                        let mut svc = BibleService::new();
+                                        match svc.load_verses(&tid, bid, ch).await {
+                                            Ok(vs) => verses.set(vs),
+                                            Err(e) => load_error.set(Some(format!("{}", e))),
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
                 }
 
                 // Loading state
@@ -248,7 +346,7 @@ fn App() -> Element {
                                         for verse in verses.read().iter() {
                                             div {
                                                 key: "{verse.id}",
-                                                class: "flex gap-4 items-start group hover:bg-tertiary rounded-lg p-4 transition-colors theme-transition",
+                                                class: "flex gap-4 items-start group hover:bg-tertiary rounded-lg p-4 transition-colors theme-transition bg-secondary",
                                                 div {
                                                     class: "flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center text-sm font-bold",
                                                     "{verse.verse}"

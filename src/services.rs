@@ -42,10 +42,17 @@ impl BibleService {
         }
 
         // Load from embedded JSON
+        // Most translations share the same book structure. Reuse KJV books for
+        // other English translations as a reasonable default.
         let books_json = match translation_id {
-            "kjv" => include_str!("data/kjv_books.json"),
+            "kjv" | "niv" | "nkjv" => include_str!("data/kjv_books.json"),
             "tamil" => include_str!("data/tamil_books.json"),
-            _ => return Err(format!("Translation '{}' not supported", translation_id)),
+            other => {
+                // Fallback to KJV book list to avoid breaking the UI for unknown
+                // but structurally similar translations.
+                eprintln!("[BibleService] Falling back to KJV book list for translation: {}", other);
+                include_str!("data/kjv_books.json")
+            }
         };
 
         match serde_json::from_str::<Vec<Book>>(books_json) {
@@ -77,7 +84,10 @@ impl BibleService {
             "tamil" => include_str!("data/tamil_verses.json"),
             "niv" => include_str!("data/niv_verses.json"),
             "nkjv" => include_str!("data/nkjv_verses.json"),
-            _ => return Err(format!("Translation '{}' not supported", translation_id)),
+            other => {
+                eprintln!("[BibleService] Translation '{}' not bundled. Falling back to KJV verses.", other);
+                include_str!("data/kjv_verses.json")
+            }
         };
 
         match serde_json::from_str::<Vec<Verse>>(verses_json) {
