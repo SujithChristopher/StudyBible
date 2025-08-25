@@ -1,7 +1,8 @@
-/* Simple dark theme implementation using CSS classes */
+/* StudyBible Custom CSS - works alongside Tailwind CSS */
 
-/* Light theme (default) */
-.theme-light {
+/* Custom theme colors that extend Tailwind */
+:root {
+  /* Light theme */
   --bg-primary: #f9fafb;
   --bg-secondary: #ffffff; 
   --bg-tertiary: #f3f4f6;
@@ -12,7 +13,6 @@
   --border-secondary: #d1d5db;
 }
 
-/* Dark theme */
 .theme-dark {
   --bg-primary: #111827;
   --bg-secondary: #1f2937;
@@ -24,49 +24,54 @@
   --border-secondary: #374151;
 }
 
-/* Base styles */
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
+/* Custom utility classes */
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary { background-color: var(--bg-tertiary); }
 
-/* Utility classes using CSS variables */
-.bg-primary { background-color: var(--bg-primary) !important; }
-.bg-secondary { background-color: var(--bg-secondary) !important; }
-.bg-tertiary { background-color: var(--bg-tertiary) !important; }
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
 
-.text-primary { color: var(--text-primary) !important; }
-.text-secondary { color: var(--text-secondary) !important; }
-.text-tertiary { color: var(--text-tertiary) !important; }
-
-.border-primary { border-color: var(--border-primary) !important; }
-.border-secondary { border-color: var(--border-secondary) !important; }
+.border-primary { border-color: var(--border-primary); }
+.border-secondary { border-color: var(--border-secondary); }
 
 .theme-transition {
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Override specific elements that might not pick up theme */
-.theme-dark input {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-  border-color: var(--border-primary);
+/* Smooth scrollbar styling */
+.scrollbar-thin {
+  scrollbar-width: thin;
 }
 
-.theme-dark select {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-  border-color: var(--border-primary);
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
 }
 
-/* Button hover states for themes */
-.theme-light button:hover {
-  background-color: var(--bg-tertiary);
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.theme-dark button:hover {
-  background-color: var(--bg-tertiary);
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.7);
+}
+
+.theme-dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(75, 85, 99, 0.7);
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease-in-out;
 }

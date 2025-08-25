@@ -6,7 +6,20 @@
       "WebFetch(domain:github.com)",
       "Bash(cargo binstall:*)",
       "Bash(dx serve:*)",
-      "Bash(java:*)"
+      "Bash(java:*)",
+      "Bash(cargo check:*)",
+      "Bash(cargo add:*)",
+      "Read(/c:\\Users\\Pintu\\Downloads/**)",
+      "Read(/c:\\Users\\Pintu\\Downloads/**)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(./node_modules/.bin/tailwindcss:*)",
+      "Bash(npx @tailwindcss/cli:*)",
+      "Read(/c:\\Users\\Pintu\\Downloads/**)",
+      "Bash(dx:*)",
+      "Bash(copy:*)",
+      "Bash(del:*)"
     ],
     "deny": [],
     "ask": []

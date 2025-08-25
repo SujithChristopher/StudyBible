@@ -28,8 +28,8 @@ fn App() -> Element {
     let mut selected_book = use_signal(|| None::<Book>);
     let mut selected_translation = use_signal(|| None::<Translation>);
     let mut selected_chapter = use_signal(|| 1);
-    let bookmarks = use_signal(|| Vec::<Bookmark>::new());
-    let _highlights = use_signal(|| Vec::<TextHighlight>::new());
+    let mut bookmarks = use_signal(|| Vec::<Bookmark>::new());
+    let mut highlights = use_signal(|| Vec::<TextHighlight>::new());
     
     // UI state
     let mut zoom_level = use_signal(|| 1.0);
@@ -83,15 +83,14 @@ fn App() -> Element {
     });
 
     // Event handlers
-    let mut on_book_select = move |book: Book| {
+    let on_book_select = move |book: Book| {
         selected_book.set(Some(book.clone()));
         selected_chapter.set(1);
         
-        let translation_id = selected_translation.read().as_ref().map(|t| t.id.clone());
-        if let Some(trans_id) = translation_id {
+        if let Some(translation) = &*selected_translation.read() {
             spawn(async move {
                 let mut bible_service = BibleService::new();
-                match bible_service.load_verses(&trans_id, book.id, 1).await {
+                match bible_service.load_verses(&translation.id, book.id, 1).await {
                     Ok(verses_list) => verses.set(verses_list),
                     Err(e) => load_error.set(Some(format!("Failed to load verses: {}", e))),
                 }
@@ -99,7 +98,7 @@ fn App() -> Element {
         }
     };
 
-    let mut on_translation_select = move |translation_id: String| {
+    let on_translation_select = move |translation_id: String| {
         if let Some(translation) = translations.read().iter().find(|t| t.id == translation_id) {
             selected_translation.set(Some(translation.clone()));
             
@@ -164,10 +163,7 @@ fn App() -> Element {
                     set_search_query: move |query: String| search_query.set(query),
                     on_search: move |_| {},
                     is_parallel_view: *is_parallel_view.read(),
-                    on_toggle_parallel_view: move |_| {
-                        let current = *is_parallel_view.read();
-                        is_parallel_view.set(!current);
-                    },
+                    on_toggle_parallel_view: move |_| is_parallel_view.set(!*is_parallel_view.read()),
                     has_secondary_translation: false,
                     selected_book: selected_book.read().clone(),
                     selected_chapter: *selected_chapter.read(),
@@ -175,14 +171,8 @@ fn App() -> Element {
                     on_prev_chapter: move |_| {},
                     on_next_chapter: move |_| {},
                     zoom_level: *zoom_level.read(),
-                    on_zoom_in: move |_| {
-                        let current = *zoom_level.read();
-                        zoom_level.set((current + 0.1).min(2.0));
-                    },
-                    on_zoom_out: move |_| {
-                        let current = *zoom_level.read();
-                        zoom_level.set((current - 0.1).max(0.5));
-                    },
+                    on_zoom_in: move |_| zoom_level.set((*zoom_level.read() + 0.1).min(2.0)),
+                    on_zoom_out: move |_| zoom_level.set((*zoom_level.read() - 0.1).max(0.5)),
                     on_reset_zoom: move |_| zoom_level.set(1.0),
                     is_dark: *is_dark_theme.read(),
                     set_is_dark: move |dark: bool| is_dark_theme.set(dark)

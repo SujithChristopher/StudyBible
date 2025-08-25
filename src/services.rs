@@ -19,16 +19,16 @@ impl BibleService {
 
     /// Initialize the service by loading translations
     pub async fn initialize(&mut self) -> Result<(), String> {
-        self.load_translations().await
+        self.load_translations().await.map(|_| ())
     }
 
     /// Load available translations
-    pub async fn load_translations(&mut self) -> Result<(), String> {
+    pub async fn load_translations(&mut self) -> Result<Vec<Translation>, String> {
         let translations_json = include_str!("data/translations_index.json");
         match serde_json::from_str::<TranslationIndex>(translations_json) {
             Ok(data) => {
-                self.translations = data.translations;
-                Ok(())
+                self.translations = data.translations.clone();
+                Ok(data.translations)
             },
             Err(e) => Err(format!("Failed to load translations: {}", e)),
         }
