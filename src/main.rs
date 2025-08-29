@@ -520,54 +520,72 @@ fn App() -> Element {
                                         }
                                     }
                                     div {
-                                        class: if *is_parallel_view.read() && *is_parallel_by_columns.read() { "grid grid-cols-1 md:grid-cols-2 gap-6" } else { "space-y-4" },
+                                        class: "space-y-4",
                                         style: format!("font-size: {}rem; line-height: 1.6;", 1.125 * *zoom_level.read()),
                                         if *is_parallel_view.read() && *is_parallel_by_columns.read() {
-                                            // Two columns, align by verse index
-                                            div { class: "space-y-4",
+                                            // Two columns: render row per verse so heights are aligned across columns
+                                            div { class: "space-y-3",
                                                 for verse in verses.read().iter() {
-                                                    div { class: "flex gap-3 items-start bg-secondary rounded-lg p-3", key: "l-{verse.id}",
-                                                        div { class: "w-6 h-6 bg-blue-500 text-white rounded flex items-center justify-center text-xs font-bold", "{verse.verse}" }
-                                                        p { class: "text-primary", "{verse.text}" }
-                                                    }
-                                                }
-                                            }
-                                            div { class: "space-y-4",
-                                                for verse in secondary_verses.read().iter() {
-                                                    div { class: "flex gap-3 items-start bg-secondary rounded-lg p-3", key: "r-{verse.id}",
-                                                        div { class: "w-6 h-6 bg-purple-500 text-white rounded flex items-center justify-center text-xs font-bold", "{verse.verse}" }
-                                                        p { class: "text-primary", "{verse.text}" }
+                                                    div { class: "grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6", key: "row2-{verse.id}",
+                                                        // Left cell (primary)
+                                                        div { class: "flex gap-3 items-start bg-secondary rounded-lg p-4 border border-gray-200 dark:border-gray-700 w-full",
+                                                            div { class: "w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold tabular-nums flex-shrink-0", "{verse.verse}" }
+                                                            p { class: "text-primary leading-relaxed min-h-[2rem] flex items-start flex-1", "{verse.text}" }
+                                                        }
+                                                        // Right cell (secondary or placeholder)
+                                                        if let Some(sv) = secondary_verses.read().iter().find(|sv| sv.verse == verse.verse).cloned() {
+                                                            div { class: "flex gap-3 items-start bg-secondary rounded-lg p-4 border border-gray-200 dark:border-gray-700 w-full",
+                                                                div { class: "w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold tabular-nums flex-shrink-0", "{sv.verse}" }
+                                                                p { class: "text-primary leading-relaxed min-h-[2rem] flex items-start flex-1", "{sv.text}" }
+                                                            }
+                                                        } else {
+                                                            div { class: "flex gap-3 items-start bg-secondary rounded-lg p-4 border border-gray-200 dark:border-gray-700 opacity-50 w-full",
+                                                                div { class: "w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center text-sm font-bold tabular-nums flex-shrink-0", "" }
+                                                                p { class: "text-secondary leading-relaxed min-h-[2rem] flex items-start flex-1", "" }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
                                         } else if *is_parallel_view.read() && !*is_parallel_by_columns.read() {
                                             // Rows: primary verse then secondary under it if available
-                                            for verse in verses.read().iter() {
-                                                div { class: "space-y-2 bg-secondary rounded-lg p-4", key: "row-{verse.id}",
-                                                    div { class: "flex gap-3 items-start",
-                                                        div { class: "w-6 h-6 bg-blue-500 text-white rounded flex items-center justify-center text-xs font-bold", "{verse.verse}" }
-                                                        p { class: "text-primary", "{verse.text}" }
-                                                    }
-                                                    if let Some(sv) = secondary_verses.read().iter().find(|sv| sv.verse == verse.verse).cloned() {
-                                                        div { class: "flex gap-3 items-start border-l-4 border-purple-500 pl-3", key: "sv-{sv.id}",
-                                                            div { class: "w-6 h-6 bg-purple-500 text-white rounded flex items-center justify-center text-xs font-bold", "{sv.verse}" }
-                                                            p { class: "text-primary", "{sv.text}" }
+                                            div { class: "space-y-4",
+                                                for verse in verses.read().iter() {
+                                                    div { class: "bg-secondary rounded-lg border border-gray-200 dark:border-gray-700", key: "row-{verse.id}",
+                                                        // Primary verse
+                                                        div { class: "p-4 border-b border-gray-200 dark:border-gray-700",
+                                                            div { class: "flex gap-3 items-start",
+                                                                div { class: "w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold tabular-nums flex-shrink-0", "{verse.verse}" }
+                                                                p { class: "text-primary leading-relaxed", "{verse.text}" }
+                                                            }
+                                                        }
+                                                        // Secondary verse (if available)
+                                                        if let Some(sv) = secondary_verses.read().iter().find(|sv| sv.verse == verse.verse).cloned() {
+                                                            div { class: "p-4 bg-gray-50 dark:bg-gray-800",
+                                                                div { class: "flex gap-3 items-start",
+                                                                    div { class: "w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold tabular-nums flex-shrink-0", "{sv.verse}" }
+                                                                    p { class: "text-primary leading-relaxed", "{sv.text}" }
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         } else {
-                                            for verse in verses.read().iter() {
-                                                div {
-                                                    key: "{verse.id}",
-                                                    class: "flex gap-4 items-start group hover:bg-tertiary rounded-lg p-4 transition-colors theme-transition bg-secondary",
+                                            // Single view
+                                            div { class: "space-y-3",
+                                                for verse in verses.read().iter() {
                                                     div {
-                                                        class: "flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center text-sm font-bold",
-                                                        "{verse.verse}"
-                                                    }
-                                                    p {
-                                                        class: "text-primary leading-relaxed",
-                                                        "{verse.text}"
+                                                        key: "{verse.id}",
+                                                        class: "flex gap-4 items-start group hover:bg-tertiary rounded-lg p-4 transition-colors theme-transition bg-secondary border border-gray-200 dark:border-gray-700",
+                                                        div {
+                                                            class: "flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold tabular-nums",
+                                                            "{verse.verse}"
+                                                        }
+                                                        p {
+                                                            class: "text-primary leading-relaxed",
+                                                            "{verse.text}"
+                                                        }
                                                     }
                                                 }
                                             }
