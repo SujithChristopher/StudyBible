@@ -14,5 +14,13 @@ name = "StudyBible"
 [bundle.linux]
 name = "StudyBible"
 
+[bundle.android]
+name = "StudyBible"
+package_name = "com.studybible.app"
+jks_file = "studybible-release-key.keystore"
+jks_password = "android123"
+key_alias = "studybible"
+key_password = "android123"
+
 [build]
 default_platform = "desktop"

@@ -19,7 +19,20 @@
       "Read(/c:\\Users\\Pintu\\Downloads/**)",
       "Bash(dx:*)",
       "Bash(copy:*)",
-      "Bash(del:*)"
+      "Bash(del:*)",
+      "Bash(keytool:*)",
+      "Bash(echo $JAVA_HOME)",
+      "Bash(where java)",
+      "Bash(set JAVA_HOME=C:Program FilesEclipse Adoptiumjdk-17.0.11.9-hotspot)",
+      "Bash(set PATH=C:Program FilesEclipse Adoptiumjdk-17.0.11.9-hotspotbin)",
+      "Bash(%PATH%)",
+      "Bash(\"C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.11.9-hotspot\\bin\\java.exe\" -version)",
+      "Bash(cmd:*)",
+      "Bash(export JAVA_HOME=\"C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.11.9-hotspot\")",
+      "Read(C:\\Program Files/**)",
+      "Bash(set JAVA_HOME=C:Program FilesJavajdk-21)",
+      "Bash(\"C:\\Program Files\\Java\\jdk-21\\bin\\java.exe\" -version)",
+      "Bash(adb:*)"
     ],
     "deny": [],
     "ask": []

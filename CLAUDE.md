@@ -1,92 +1,194 @@
-# StudyBible Dioxus Implementation - Todo List
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
-Converting the existing StudyBible project from React/Tauri to a native Dioxus (Rust) application. The original project is a comprehensive Bible study application with features like multi-translation support, highlighting, bookmarks, search, and parallel view.
+StudyBible is a native Rust desktop Bible study application built with Dioxus 0.7. It features multi-translation support, text highlighting, bookmarks, search functionality, and parallel view for comparing translations. The project was migrated from React/Tauri to pure Dioxus for native performance.
 
-## Original Project Analysis
-- **Framework**: React 19.1 + TypeScript + Tauri v2
-- **Features**: Multi-translation Bible reading, text highlighting, bookmarks, search, parallel view, zoom controls, dark/light theme
-- **Data**: KJV, NIV, NKJV, Tamil Bible translations in JSON format
-- **UI**: Glass morphism design with Tailwind CSS
-- **Architecture**: SQLite backend with Rust, React frontend
+## Development Commands
 
-## Target Implementation
-- **Framework**: Dioxus 0.6+ (Rust native)
-- **Platform**: Desktop-first with cross-platform support
-- **Features**: All original features recreated in Dioxus
-- **Performance**: Native Rust performance benefits
-
-## Implementation Todo List
-
-### Phase 1: Setup and Foundation
-- [ ] Install Dioxus CLI (cargo binstall dioxus-cli@0.7.0-rc.0 --force)
-- [ ] Create new Dioxus project structure for StudyBible
-- [ ] Copy bible translations data from original project to new Dioxus project
-- [ ] Set up project dependencies and Cargo.toml configuration
-
-### Phase 2: Core Data Structures
-- [ ] Create core data types and structures (Translation, Book, Verse, etc.)
-- [ ] Implement Bible data loading and management system
-- [ ] Create main app component with routing and state management
-
-### Phase 3: Basic UI Components
-- [ ] Implement Bible reader UI components (verse display, chapter navigation)
-- [ ] Add sidebar component with book selection and navigation
-- [ ] Create settings modal for preferences and customization
-
-### Phase 4: Advanced Features
-- [ ] Implement search functionality across translations
-- [ ] Add bookmarking system for saving favorite verses
-- [ ] Implement text highlighting feature with color options
-- [ ] Add parallel view for side-by-side translation comparison
-
-### Phase 5: User Experience
-- [ ] Implement zoom controls and accessibility features
-- [ ] Add responsive design and mobile support
-- [ ] Style the application with modern UI design
-
-### Phase 6: Testing and Polish
-- [ ] Test desktop application functionality
-- [ ] Test cross-platform compatibility
-- [ ] Add error handling and loading states
-
-## Key Files to Reference from Original Project
-- `src/types/bible.ts` - Core data type definitions
-- `src/App.tsx` - Main application structure and state management
-- `src/lib/enhancedBibleApi.ts` - Bible data API
-- `src/components/` - All UI components
-- `public/data/` - Bible translation JSON files
-
-## Dioxus Installation Commands
+### Building and Running
 ```bash
-# Install Dioxus CLI
-cargo binstall dioxus-cli@0.7.0-rc.0 --force
-
-# Alternative installation
-cargo install --git https://github.com/DioxusLabs/dioxus dioxus-cli --locked
-
-# Create new project
-dx new study-bible
-
-# Run project
+# Run development server (hot reload enabled)
 dx serve
+
+# Build for desktop release
+dx build --release
+
+# Clean build artifacts
+cargo clean
 ```
 
-## Key Dioxus Concepts to Implement
-- **Components**: Using `#[component]` and `rsx!` macro
-- **State Management**: Using `use_signal()` for reactive state
-- **Hooks**: Similar to React hooks but Rust-native
-- **Styling**: CSS-in-Rust or external stylesheets
-- **Desktop Platform**: Native desktop app without web wrapper
+### CSS Development
+```bash
+# Build Tailwind CSS
+npm run build:css
 
-## Next Steps
-1. Install Dioxus CLI when internet connection improves
-2. Create project structure
-3. Start with basic Bible reader functionality
-4. Incrementally add features following the todo list
+# Watch for CSS changes
+npm run watch:css
+```
 
-## Notes
-- Original project has excellent glass morphism UI that should be recreated
-- Focus on desktop experience first, then expand to other platforms
-- Maintain all functionality from original React version
-- Take advantage of Rust's performance and safety benefits
+### Dependencies Management
+```bash
+# Add Rust dependency
+cargo add <dependency>
+
+# Check for compilation errors
+cargo check
+
+# Install Dioxus CLI (if needed)
+cargo binstall dioxus-cli@0.7.0-rc.0 --force
+```
+
+## Architecture Overview
+
+### Core Application Structure
+- **Entry Point**: `src/main.rs` - Contains the main `App` component with all state management
+- **Type Definitions**: `src/types.rs` - Core data structures for Bible content and UI state
+- **Services**: `src/services.rs` - `BibleService` handles data loading and caching operations
+- **Components**: `src/components/` - UI components organized by functionality
+- **Data**: `src/data/` - Embedded Bible translations in JSON format
+
+### State Management Pattern
+The application uses Dioxus signals for reactive state management:
+- `use_signal()` creates reactive state values
+- State is passed down through component props
+- Event handlers update state via `EventHandler<T>` callbacks
+- All Bible data loading is asynchronous using `spawn()` for non-blocking operations
+
+### Data Architecture
+- **Embedded Data**: Bible translations are embedded as JSON files in `src/data/`
+- **Caching Layer**: `BibleService` implements in-memory caching for books and verses
+- **Async Loading**: Data loading uses Rust's async/await with error handling
+- **Translation Support**: KJV, NIV, NKJV, and Tamil translations are bundled
+
+### Component Architecture
+- **Layout Components**: `Header` and `Sidebar` provide navigation and controls
+- **Modular Design**: Components receive data and event handlers as props
+- **Responsive UI**: Uses Tailwind CSS classes with dark mode support
+- **Theme System**: CSS custom properties in `assets/main.css` for theming
+
+## Key Implementation Details
+
+### Bible Data Loading Flow
+1. App initialization loads translations index
+2. First translation is selected automatically
+3. Books are loaded and cached for the selected translation  
+4. First chapter of first book is loaded
+5. User interactions trigger additional data loading
+
+### Search Implementation
+- Limited scope search (first 5 books, first 3 chapters) for performance
+- Case-insensitive text matching
+- Results navigate to matching verses automatically
+
+### Parallel View Feature
+- Supports side-by-side translation comparison
+- Column-based and verse-by-verse layout options
+- Secondary translation loaded independently
+
+### Styling Approach
+- Tailwind CSS for utility-first styling
+- Custom CSS properties for theme variables
+- Glass morphism effects via backdrop-blur and transparency
+- Dark/light theme support via CSS classes
+
+## File Organization
+
+### Source Structure
+```
+src/
+├── main.rs              # App component and main entry point
+├── types.rs             # Data structures and enums
+├── services.rs          # BibleService and data management
+├── components/
+│   ├── layout/          # Header, Sidebar components
+│   ├── modals/          # Modal components (future)
+│   └── ui/              # Reusable UI components (future)
+└── data/               # Embedded Bible JSON files
+```
+
+### Asset Files
+- `assets/main.css` - Custom CSS and theme variables
+- `assets/tailwind.css` - Generated Tailwind styles
+- `input.css` - Tailwind source file
+
+## Development Guidelines
+
+### Adding New Translations
+1. Add JSON files to `src/data/` directory
+2. Update `translations_index.json` with translation metadata
+3. Modify `BibleService::load_books()` and `load_verses()` match statements
+4. Test data loading and display
+
+### Component Development
+- Follow Dioxus component patterns with `#[component]` attribute
+- Use `rsx!` macro for JSX-like syntax
+- Pass event handlers as `EventHandler<T>` props
+- Implement proper error states and loading indicators
+
+### State Updates
+- Use `spawn()` for async operations that update state
+- Handle errors gracefully with user-friendly messages
+- Cache data appropriately to avoid unnecessary reloading
+- Update dependent state when primary selections change
+
+### CSS and Theming
+- Use Tailwind utility classes for styling
+- Reference theme variables from `assets/main.css`
+- Support both dark and light modes
+- Maintain responsive design principles
+
+## Platform and Build Configuration
+
+### Dioxus Configuration (`Dioxus.toml`)
+- Desktop-first application with cross-platform support
+- Bundle configuration for Windows, macOS, and Linux
+- Application identifier: `com.studybible.app`
+
+### Cargo Dependencies
+- Dioxus 0.7.0-rc.0 with desktop features
+- Serde for JSON serialization/deserialization  
+- Tokio for async runtime
+- Theme crate for additional styling utilities
+- Chrono for date/time handling
+
+The application is designed as a comprehensive Bible study tool with room for expansion into bookmarking, highlighting, and other advanced features while maintaining excellent performance through native Rust implementation.
+
+## Android Development Status
+
+### Completed Setup Tasks:
+- ✅ Added mobile features to Cargo.toml (`dioxus = { features = ["desktop", "mobile"] }`)
+- ✅ Added Android bundle configuration to Dioxus.toml with keystore settings
+- ✅ Generated Android keystore file (`studybible-release-key.keystore`)
+- ✅ Verified Android SDK, NDK, and toolchains are installed
+
+### Current Android Configuration:
+```toml
+[bundle.android]
+name = "StudyBible"
+package_name = "com.studybible.app"
+jks_file = "studybible-release-key.keystore"
+jks_password = "android123"
+key_alias = "studybible"
+key_password = "android123"
+```
+
+### Outstanding Issues:
+- **Java Version Conflict**: Build fails with "Unsupported class file major version 68" 
+  - Current: Java 24 (incompatible with Gradle)
+  - Solution: Need to use Java 17 permanently for Android builds
+  - Java 17 path: `C:\Program Files\Eclipse Adoptium\jdk-17.0.11.9-hotspot`
+
+### Next Steps for Android Testing:
+1. **Fix Java Environment**: Set JAVA_HOME to Java 17 permanently
+2. **Complete Build**: Run `dx serve --platform android` with proper Java version
+3. **Test APK**: Verify app functionality on Android emulator/device
+4. **UI Optimization**: Adapt UI for mobile touch interactions
+
+### Android Build Command:
+```bash
+# With proper Java 17 environment
+export JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-17.0.11.9-hotspot"
+dx serve --platform android
+```
