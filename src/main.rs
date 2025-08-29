@@ -100,6 +100,21 @@ fn App() -> Element {
                 }
             });
         }
+        // refresh secondary if selected
+        if let Some(sec) = &*secondary_translation.read() {
+            let sec_id = sec.id.clone();
+            let bid = book.id;
+            let ch = 1u32;
+            spawn(async move {
+                let mut svc = BibleService::new();
+                match svc.load_verses(&sec_id, bid, ch).await {
+                    Ok(vs) => secondary_verses.set(vs),
+                    Err(_) => secondary_verses.set(Vec::new()),
+                }
+            });
+        } else {
+            secondary_verses.set(Vec::new());
+        }
     };
 
     let mut on_translation_select = move |translation_id: String| {
@@ -125,6 +140,21 @@ fn App() -> Element {
                                     Err(e) => load_error.set(Some(format!("{}", e))),
                                 }
                             });
+                            // refresh secondary if selected
+                            if let Some(sec) = &*secondary_translation.read() {
+                                let sec_id = sec.id.clone();
+                                let bid2 = bid;
+                                let ch2 = ch;
+                                spawn(async move {
+                                    let mut svc = BibleService::new();
+                                    match svc.load_verses(&sec_id, bid2, ch2).await {
+                                        Ok(vs) => secondary_verses.set(vs),
+                                        Err(_) => secondary_verses.set(Vec::new()),
+                                    }
+                                });
+                            } else {
+                                secondary_verses.set(Vec::new());
+                            }
                         }
                     }
                     Err(e) => load_error.set(Some(format!("Failed to load books: {}", e))),
@@ -214,7 +244,34 @@ fn App() -> Element {
                     is_parallel_view: *is_parallel_view.read(),
                     on_toggle_parallel_view: move |_| {
                         let current = *is_parallel_view.read();
-                        is_parallel_view.set(!current);
+                        let new_val = !current;
+                        is_parallel_view.set(new_val);
+                        // If turning on parallel view without a secondary selected, auto-pick one and load it
+                        if new_val && secondary_translation.read().is_none() {
+                            // choose first different from primary
+                            let primary_id_opt = selected_translation.read().as_ref().map(|t| t.id.clone());
+                            if let Some(default_trans) = translations
+                                .read()
+                                .iter()
+                                .find(|t| Some(t.id.clone()) != primary_id_opt)
+                                .cloned()
+                            {
+                                // set selection
+                                secondary_translation.set(Some(default_trans.clone()));
+                                if let Some(book) = &*selected_book.read() {
+                                    let bid = book.id;
+                                    let ch = *selected_chapter.read();
+                                    let sid = default_trans.id.clone();
+                                    spawn(async move {
+                                        let mut svc = BibleService::new();
+                                        match svc.load_verses(&sid, bid, ch).await {
+                                            Ok(vs) => secondary_verses.set(vs),
+                                            Err(_) => secondary_verses.set(Vec::new()),
+                                        }
+                                    });
+                                }
+                            }
+                        }
                     },
                     has_secondary_translation: true,
                     secondary_translation: secondary_translation.read().clone(),
@@ -267,6 +324,21 @@ fn App() -> Element {
                                         }
                                     });
                                 }
+                                // refresh secondary
+                                if let Some(sec) = &*secondary_translation.read() {
+                                    let sec_id = sec.id.clone();
+                                    let bid2 = book.id;
+                                    let ch2 = new_ch;
+                                    spawn(async move {
+                                        let mut svc = BibleService::new();
+                                        match svc.load_verses(&sec_id, bid2, ch2).await {
+                                            Ok(vs) => secondary_verses.set(vs),
+                                            Err(_) => secondary_verses.set(Vec::new()),
+                                        }
+                                    });
+                                } else {
+                                    secondary_verses.set(Vec::new());
+                                }
                             }
                         }
                     },
@@ -288,6 +360,21 @@ fn App() -> Element {
                                             Err(e) => load_err.set(Some(format!("{}", e))),
                                         }
                                     });
+                                }
+                                // refresh secondary
+                                if let Some(sec) = &*secondary_translation.read() {
+                                    let sec_id = sec.id.clone();
+                                    let bid2 = book.id;
+                                    let ch2 = new_ch;
+                                    spawn(async move {
+                                        let mut svc = BibleService::new();
+                                        match svc.load_verses(&sec_id, bid2, ch2).await {
+                                            Ok(vs) => secondary_verses.set(vs),
+                                            Err(_) => secondary_verses.set(Vec::new()),
+                                        }
+                                    });
+                                } else {
+                                    secondary_verses.set(Vec::new());
                                 }
                             }
                         }
@@ -318,6 +405,21 @@ fn App() -> Element {
                                             Err(e) => load_error.set(Some(format!("{}", e))),
                                         }
                                     });
+                                }
+                                // refresh secondary
+                                if let Some(sec) = &*secondary_translation.read() {
+                                    let sec_id = sec.id.clone();
+                                    let bid2 = book.id;
+                                    let ch2 = ch;
+                                    spawn(async move {
+                                        let mut svc = BibleService::new();
+                                        match svc.load_verses(&sec_id, bid2, ch2).await {
+                                            Ok(vs) => secondary_verses.set(vs),
+                                            Err(_) => secondary_verses.set(Vec::new()),
+                                        }
+                                    });
+                                } else {
+                                    secondary_verses.set(Vec::new());
                                 }
                             }
                         }
@@ -371,6 +473,52 @@ fn App() -> Element {
                                     }
                                     
                                     // Verses
+                                    // Secondary translation picker shown above verses when parallel view is active
+                                    if *is_parallel_view.read() {
+                                        div { class: "flex items-center justify-between mb-4",
+                                            if let Some(primary) = &*selected_translation.read() {
+                                                span { class: "text-sm text-secondary", "Primary: {primary.name}" }
+                                            }
+                                            div { class: "text-right",
+                                                select {
+                                                    class: "px-2 py-1 rounded border text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100",
+                                                    value: secondary_translation.read().as_ref().map(|t| t.id.as_str()).unwrap_or(""),
+                                                    onchange: move |evt| {
+                                                        let tid = evt.value();
+                                                        if tid.is_empty() {
+                                                            secondary_translation.set(None);
+                                                            secondary_verses.set(Vec::new());
+                                                        } else {
+                                                            is_parallel_view.set(true);
+                                                            if let Some(book) = &*selected_book.read() {
+                                                                let ch = *selected_chapter.read();
+                                                                let bid = book.id;
+                                                                let tid_clone = tid.clone();
+                                                                spawn(async move {
+                                                                    let mut svc = BibleService::new();
+                                                                    match svc.load_verses(&tid_clone, bid, ch).await {
+                                                                        Ok(vs) => secondary_verses.set(vs),
+                                                                        Err(_) => secondary_verses.set(Vec::new()),
+                                                                    }
+                                                                });
+                                                            }
+                                                            if let Some(t) = translations.read().iter().find(|t| t.id == tid).cloned() {
+                                                                secondary_translation.set(Some(t));
+                                                            }
+                                                        }
+                                                    },
+                                                    option { value: "", "None" }
+                                                    for t in translations.read().iter() {
+                                                        if let Some(primary) = &*selected_translation.read() {
+                                                            if t.id != primary.id {
+                                                                option { value: "{t.id}", "{t.name}" }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                     div {
                                         class: if *is_parallel_view.read() && *is_parallel_by_columns.read() { "grid grid-cols-1 md:grid-cols-2 gap-6" } else { "space-y-4" },
                                         style: format!("font-size: {}rem; line-height: 1.6;", 1.125 * *zoom_level.read()),
@@ -389,6 +537,22 @@ fn App() -> Element {
                                                     div { class: "flex gap-3 items-start bg-secondary rounded-lg p-3", key: "r-{verse.id}",
                                                         div { class: "w-6 h-6 bg-purple-500 text-white rounded flex items-center justify-center text-xs font-bold", "{verse.verse}" }
                                                         p { class: "text-primary", "{verse.text}" }
+                                                    }
+                                                }
+                                            }
+                                        } else if *is_parallel_view.read() && !*is_parallel_by_columns.read() {
+                                            // Rows: primary verse then secondary under it if available
+                                            for verse in verses.read().iter() {
+                                                div { class: "space-y-2 bg-secondary rounded-lg p-4", key: "row-{verse.id}",
+                                                    div { class: "flex gap-3 items-start",
+                                                        div { class: "w-6 h-6 bg-blue-500 text-white rounded flex items-center justify-center text-xs font-bold", "{verse.verse}" }
+                                                        p { class: "text-primary", "{verse.text}" }
+                                                    }
+                                                    if let Some(sv) = secondary_verses.read().iter().find(|sv| sv.verse == verse.verse).cloned() {
+                                                        div { class: "flex gap-3 items-start border-l-4 border-purple-500 pl-3", key: "sv-{sv.id}",
+                                                            div { class: "w-6 h-6 bg-purple-500 text-white rounded flex items-center justify-center text-xs font-bold", "{sv.verse}" }
+                                                            p { class: "text-primary", "{sv.text}" }
+                                                        }
                                                     }
                                                 }
                                             }
