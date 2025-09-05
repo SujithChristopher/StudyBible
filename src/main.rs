@@ -8,6 +8,7 @@ mod components;
 use types::*;
 use services::*;
 use components::layout::{Header, Sidebar};
+use components::modals::TranslationsModal;
 
 fn main() {
     dioxus::launch(App);
@@ -38,27 +39,36 @@ fn App() -> Element {
     let mut secondary_translation = use_signal(|| None::<Translation>);
     let mut secondary_verses = use_signal(|| Vec::<Verse>::new());
     let mut search_query = use_signal(|| String::new());
+    let mut show_translations_modal = use_signal(|| false);
     
     // Initialize data on startup
     use_effect(move || {
         spawn(async move {
             let mut bible_service = BibleService::new();
+            // Ensure NIV on first run
+            let _ = bible_service.ensure_default_niv().await;
             
             match bible_service.load_translations().await {
                 Ok(trans_list) => {
                     translations.set(trans_list.clone());
-                    if let Some(first_translation) = trans_list.first() {
-                        selected_translation.set(Some(first_translation.clone()));
-                        
-                        // Load books for the first translation
-                        match bible_service.load_books(&first_translation.id).await {
+                    // Choose translation (prefer NIV)
+                    let chosen = trans_list
+                        .iter()
+                        .find(|t| t.id == "niv")
+                        .cloned()
+                        .or_else(|| trans_list.first().cloned());
+                    if let Some(chosen_trans) = chosen {
+                        let chosen_id = chosen_trans.id.clone();
+                        selected_translation.set(Some(chosen_trans));
+                        // Load books for chosen translation
+                        match bible_service.load_books(&chosen_id).await {
                             Ok(books_list) => {
                                 books.set(books_list.clone());
                                 if let Some(first_book) = books_list.first() {
                                     selected_book.set(Some(first_book.clone()));
-                                    
+                                    let bid = first_book.id;
                                     // Load first chapter
-                                    match bible_service.load_verses(&first_translation.id, first_book.id, 1).await {
+                                    match bible_service.load_verses(&chosen_id, bid, 1).await {
                                         Ok(verses_list) => {
                                             verses.set(verses_list);
                                             is_loading.set(false);
@@ -68,6 +78,8 @@ fn App() -> Element {
                                             is_loading.set(false);
                                         }
                                     }
+                                } else {
+                                    is_loading.set(false);
                                 }
                             }
                             Err(e) => {
@@ -75,6 +87,9 @@ fn App() -> Element {
                                 is_loading.set(false);
                             }
                         }
+                    } else {
+                        load_error.set(Some("No translations available".to_string()));
+                        is_loading.set(false);
                     }
                 }
                 Err(e) => {
@@ -188,7 +203,7 @@ fn App() -> Element {
                 on_select_book: move |book: Book| on_book_select(book),
                 on_select_translation: move |id: String| on_translation_select(id),
                 on_open_bookmarks: move |_| {},
-                on_open_settings: move |_| {},
+                on_open_settings: move |_| show_translations_modal.set(true),
                 on_toggle_sidebar: move |_| {
                     let current = *is_sidebar_open.read();
                     is_sidebar_open.set(!current)
@@ -241,6 +256,7 @@ fn App() -> Element {
                             }
                         }
                     },
+                    // TEMP: open translations modal via settings for now
                     is_parallel_view: *is_parallel_view.read(),
                     on_toggle_parallel_view: move |_| {
                         let current = *is_parallel_view.read();
@@ -610,6 +626,8 @@ fn App() -> Element {
                 }
                 }
             }
+            // Modals
+            TranslationsModal { is_open: *show_translations_modal.read(), translations: translations.read().clone(), on_close: move |_| show_translations_modal.set(false) }
         }
     }
 }

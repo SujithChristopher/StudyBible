@@ -14,6 +14,8 @@ pub fn Sidebar(
     on_select_translation: EventHandler<String>,
     on_open_bookmarks: EventHandler<()>,
     on_open_settings: EventHandler<()>,
+    // New: open translations modal
+    // For now reuse settings button to open translations modal from parent
     on_toggle_sidebar: EventHandler<()>,
 ) -> Element {
     // Separate books by testament
@@ -185,8 +187,8 @@ pub fn Sidebar(
                 button {
                     class: "w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors",
                     onclick: move |_| on_open_settings.call(()),
-                    span { "⚙️" }
-                    span { "Settings" }
+                    span { "⬇️" }
+                    span { "Translations" }
                 }
             }
         }

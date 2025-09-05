@@ -139,47 +139,7 @@ pub enum HighlightColor {
     Purple,
 }
 
-impl HighlightColor {
-    pub fn get_styles(&self) -> HighlightColorOption {
-        match self {
-            HighlightColor::Yellow => HighlightColorOption {
-                name: HighlightColor::Yellow,
-                label: "Yellow".to_string(),
-                bg: "bg-yellow-200/60".to_string(),
-                border: "border-yellow-300".to_string(),
-                hover: "hover:bg-yellow-200/80".to_string(),
-            },
-            HighlightColor::Green => HighlightColorOption {
-                name: HighlightColor::Green,
-                label: "Green".to_string(),
-                bg: "bg-green-200/60".to_string(),
-                border: "border-green-300".to_string(),
-                hover: "hover:bg-green-200/80".to_string(),
-            },
-            HighlightColor::Blue => HighlightColorOption {
-                name: HighlightColor::Blue,
-                label: "Blue".to_string(),
-                bg: "bg-blue-200/60".to_string(),
-                border: "border-blue-300".to_string(),
-                hover: "hover:bg-blue-200/80".to_string(),
-            },
-            HighlightColor::Pink => HighlightColorOption {
-                name: HighlightColor::Pink,
-                label: "Pink".to_string(),
-                bg: "bg-pink-200/60".to_string(),
-                border: "border-pink-300".to_string(),
-                hover: "hover:bg-pink-200/80".to_string(),
-            },
-            HighlightColor::Purple => HighlightColorOption {
-                name: HighlightColor::Purple,
-                label: "Purple".to_string(),
-                bg: "bg-purple-200/60".to_string(),
-                border: "border-purple-300".to_string(),
-                hover: "hover:bg-purple-200/80".to_string(),
-            },
-        }
-    }
-}
+// Removed unused HighlightColor::get_styles to reduce warnings
 
 /// Reader preferences for customizing the reading experience
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -199,42 +159,4 @@ impl Default for ReaderPreferences {
     }
 }
 
-/// App state for managing the current UI state
-#[derive(Debug, Clone)]
-pub struct AppState {
-    pub selected_book: Option<Book>,
-    pub selected_chapter: u32,
-    pub selected_translation: Option<Translation>,
-    pub secondary_translation: Option<Translation>,
-    pub books: Vec<Book>,
-    pub translations: Vec<Translation>,
-    pub verses: Vec<Verse>,
-    pub bookmarks: Vec<Bookmark>,
-    pub highlights: Vec<TextHighlight>,
-    pub preferences: ReaderPreferences,
-    pub is_parallel_view: bool,
-    pub is_sidebar_open: bool,
-    pub is_dark_theme: bool,
-    pub zoom_level: f32,
-}
-
-impl Default for AppState {
-    fn default() -> Self {
-        Self {
-            selected_book: None,
-            selected_chapter: 1,
-            selected_translation: None,
-            secondary_translation: None,
-            books: Vec::new(),
-            translations: Vec::new(),
-            verses: Vec::new(),
-            bookmarks: Vec::new(),
-            highlights: Vec::new(),
-            preferences: ReaderPreferences::default(),
-            is_parallel_view: false,
-            is_sidebar_open: false,
-            is_dark_theme: false,
-            zoom_level: 1.0,
-        }
-    }
-}
+// Removed unused AppState struct
