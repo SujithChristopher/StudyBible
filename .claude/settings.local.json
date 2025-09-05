@@ -32,7 +32,10 @@
       "Read(C:\\Program Files/**)",
       "Bash(set JAVA_HOME=C:Program FilesJavajdk-21)",
       "Bash(\"C:\\Program Files\\Java\\jdk-21\\bin\\java.exe\" -version)",
-      "Bash(adb:*)"
+      "Bash(adb:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git submodule add:*)",
+      "Bash(git submodule:*)"
     ],
     "deny": [],
     "ask": []

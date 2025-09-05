@@ -45,16 +45,16 @@ fn App() -> Element {
     use_effect(move || {
         spawn(async move {
             let mut bible_service = BibleService::new();
-            // Ensure NIV on first run
-            let _ = bible_service.ensure_default_niv().await;
+            // Ensure we have at least one translation
+            let _ = bible_service.ensure_default_translation().await;
             
             match bible_service.load_translations().await {
                 Ok(trans_list) => {
                     translations.set(trans_list.clone());
-                    // Choose translation (prefer NIV)
+                    // Choose first available translation
                     let chosen = trans_list
                         .iter()
-                        .find(|t| t.id == "niv")
+                        .find(|t| t.language.starts_with("en") || t.language_name.as_ref().map(|n| n.contains("English")).unwrap_or(false))
                         .cloned()
                         .or_else(|| trans_list.first().cloned());
                     if let Some(chosen_trans) = chosen {
