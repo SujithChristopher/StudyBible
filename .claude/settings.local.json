@@ -32,7 +32,8 @@
       "Read(C:\\Program Files/**)",
       "Bash(set JAVA_HOME=C:Program FilesJavajdk-21)",
       "Bash(\"C:\\Program Files\\Java\\jdk-21\\bin\\java.exe\" -version)",
-      "Bash(adb:*)"
+      "Bash(adb:*)",
+      "Bash(set ANDROID_SERIAL=7f905733)"
     ],
     "deny": [],
     "ask": []

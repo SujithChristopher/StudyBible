@@ -43,11 +43,11 @@ cargo binstall dioxus-cli@0.7.0-rc.0 --force
 ## Architecture Overview
 
 ### Core Application Structure
-- **Entry Point**: `src/main.rs` - Contains the main `App` component with all state management
-- **Type Definitions**: `src/types.rs` - Core data structures for Bible content and UI state
-- **Services**: `src/services.rs` - `BibleService` handles data loading and caching operations
-- **Components**: `src/components/` - UI components organized by functionality
-- **Data**: `src/data/` - Embedded Bible translations in JSON format
+- **Entry Point**: [src/main.rs](src/main.rs) - Contains the main `App` component with all state management
+- **Type Definitions**: [src/types.rs](src/types.rs) - Core data structures for Bible content and UI state
+- **Services**: [src/services.rs](src/services.rs) - `BibleService` handles data loading and caching operations
+- **Components**: [src/components/](src/components/) - UI components organized by functionality
+- **Data**: [src/data/](src/data/) - Embedded Bible translations in JSON format
 
 ### State Management Pattern
 The application uses Dioxus signals for reactive state management:
@@ -71,27 +71,31 @@ The application uses Dioxus signals for reactive state management:
 ## Key Implementation Details
 
 ### Bible Data Loading Flow
-1. App initialization loads translations index
+
+1. App initialization loads translations index from [src/data/translations_index.json](src/data/translations_index.json)
 2. First translation is selected automatically
-3. Books are loaded and cached for the selected translation  
+3. Books are loaded and cached for the selected translation
 4. First chapter of first book is loaded
-5. User interactions trigger additional data loading
+5. User interactions trigger additional data loading via event handlers
 
 ### Search Implementation
+
 - Limited scope search (first 5 books, first 3 chapters) for performance
-- Case-insensitive text matching
+- Case-insensitive text matching in [src/services.rs:120-144](src/services.rs#L120-L144)
 - Results navigate to matching verses automatically
 
 ### Parallel View Feature
+
 - Supports side-by-side translation comparison
 - Column-based and verse-by-verse layout options
-- Secondary translation loaded independently
+- Secondary translation loaded independently when parallel view is enabled
 
 ### Styling Approach
-- Tailwind CSS for utility-first styling
-- Custom CSS properties for theme variables
+
+- Tailwind CSS v4 for utility-first styling
+- Custom CSS properties for theme variables in [assets/main.css](assets/main.css)
 - Glass morphism effects via backdrop-blur and transparency
-- Dark/light theme support via CSS classes
+- Dark/light theme support via CSS custom properties and `.dark` class
 
 ## File Organization
 
@@ -109,86 +113,78 @@ src/
 ```
 
 ### Asset Files
-- `assets/main.css` - Custom CSS and theme variables
-- `assets/tailwind.css` - Generated Tailwind styles
-- `input.css` - Tailwind source file
+
+- [assets/main.css](assets/main.css) - Custom CSS and theme variables
+- [assets/tailwind.css](assets/tailwind.css) - Generated Tailwind styles
+- [input.css](input.css) - Tailwind source file
 
 ## Development Guidelines
 
 ### Adding New Translations
-1. Add JSON files to `src/data/` directory
-2. Update `translations_index.json` with translation metadata
-3. Modify `BibleService::load_books()` and `load_verses()` match statements
+
+1. Add JSON files to [src/data/](src/data/) directory (e.g., `translation_id_verses.json`, `translation_id_metadata.json`)
+2. Update [src/data/translations_index.json](src/data/translations_index.json) with translation metadata
+3. Modify `BibleService::load_books()` and `load_verses()` match statements in [src/services.rs](src/services.rs)
 4. Test data loading and display
 
 ### Component Development
+
 - Follow Dioxus component patterns with `#[component]` attribute
 - Use `rsx!` macro for JSX-like syntax
 - Pass event handlers as `EventHandler<T>` props
 - Implement proper error states and loading indicators
 
 ### State Updates
+
 - Use `spawn()` for async operations that update state
 - Handle errors gracefully with user-friendly messages
 - Cache data appropriately to avoid unnecessary reloading
-- Update dependent state when primary selections change
+- Update dependent state when primary selections change (e.g., secondary translation when changing chapters)
 
 ### CSS and Theming
+
 - Use Tailwind utility classes for styling
-- Reference theme variables from `assets/main.css`
-- Support both dark and light modes
-- Maintain responsive design principles
+- Reference theme variables from [assets/main.css](assets/main.css) (`var(--bg-primary)`, etc.)
+- Support both dark and light modes via `.dark` class scope
+- Maintain responsive design principles with mobile-first approach
 
 ## Platform and Build Configuration
 
-### Dioxus Configuration (`Dioxus.toml`)
-- Desktop-first application with cross-platform support
-- Bundle configuration for Windows, macOS, and Linux
-- Application identifier: `com.studybible.app`
+### Dioxus Configuration ([Dioxus.toml](Dioxus.toml))
 
-### Cargo Dependencies
-- Dioxus 0.7.0-rc.0 with desktop features
-- Serde for JSON serialization/deserialization  
+- Desktop-first application with cross-platform support
+- Bundle configuration for Windows, macOS, Linux, and Android
+- Application identifier: `com.studybible.app`
+- Default platform: `desktop`
+
+### Cargo Dependencies ([Cargo.toml](Cargo.toml))
+
+- Dioxus 0.7.0-rc.0 with desktop and mobile features
+- Serde for JSON serialization/deserialization
 - Tokio for async runtime
 - Theme crate for additional styling utilities
 - Chrono for date/time handling
 
-The application is designed as a comprehensive Bible study tool with room for expansion into bookmarking, highlighting, and other advanced features while maintaining excellent performance through native Rust implementation.
+## Android Development
 
-## Android Development Status
+### Build Configuration
 
-### Completed Setup Tasks:
-- ✅ Added mobile features to Cargo.toml (`dioxus = { features = ["desktop", "mobile"] }`)
-- ✅ Added Android bundle configuration to Dioxus.toml with keystore settings
-- ✅ Generated Android keystore file (`studybible-release-key.keystore`)
-- ✅ Verified Android SDK, NDK, and toolchains are installed
+- Android bundle is configured in [Dioxus.toml](Dioxus.toml) with keystore settings
+- Package name: `com.studybible.app`
+- Keystore file: `studybible-release-key.keystore`
 
-### Current Android Configuration:
-```toml
-[bundle.android]
-name = "StudyBible"
-package_name = "com.studybible.app"
-jks_file = "studybible-release-key.keystore"
-jks_password = "android123"
-key_alias = "studybible"
-key_password = "android123"
-```
+### Java Version Requirement
 
-### Outstanding Issues:
-- **Java Version Conflict**: Build fails with "Unsupported class file major version 68" 
-  - Current: Java 24 (incompatible with Gradle)
-  - Solution: Need to use Java 17 permanently for Android builds
-  - Java 17 path: `C:\Program Files\Eclipse Adoptium\jdk-17.0.11.9-hotspot`
+- **IMPORTANT**: Android builds require Java 17 (not Java 24)
+- Java 17 path on Windows: `C:\Program Files\Eclipse Adoptium\jdk-17.0.11.9-hotspot`
+- Set `JAVA_HOME` to Java 17 before running Android builds
 
-### Next Steps for Android Testing:
-1. **Fix Java Environment**: Set JAVA_HOME to Java 17 permanently
-2. **Complete Build**: Run `dx serve --platform android` with proper Java version
-3. **Test APK**: Verify app functionality on Android emulator/device
-4. **UI Optimization**: Adapt UI for mobile touch interactions
+### Android Build Command
 
-### Android Build Command:
 ```bash
-# With proper Java 17 environment
-export JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-17.0.11.9-hotspot"
+# On Windows (PowerShell or CMD)
+set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-17.0.11.9-hotspot
 dx serve --platform android
 ```
+
+The application is designed as a comprehensive Bible study tool with room for expansion into bookmarking, highlighting, and other advanced features while maintaining excellent performance through native Rust implementation.
