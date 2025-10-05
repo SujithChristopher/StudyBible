@@ -22,6 +22,14 @@ jks_file = "studybible-release-key.keystore"
 jks_password = "android123"
 key_alias = "studybible"
 key_password = "android123"
+icon = "assets/icons/icon.png"
+
+# Android permissions for storage access
+[bundle.android.manifest]
+permissions = [
+    "android.permission.READ_EXTERNAL_STORAGE",
+    "android.permission.WRITE_EXTERNAL_STORAGE"
+]
 
 [build]
 default_platform = "desktop"

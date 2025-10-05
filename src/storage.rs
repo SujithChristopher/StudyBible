@@ -12,21 +12,35 @@ impl SettingsStorage {
     /// Creates a new SettingsStorage instance
     ///
     /// Platform-specific paths:
-    /// - Windows: C:\Users\<user>\AppData\Roaming\StudyBible\config.json
-    /// - macOS: ~/Library/Application Support/StudyBible/config.json
-    /// - Linux: ~/.config/StudyBible/config.json
-    /// - Android: App-specific storage
+    /// - Windows: C:\Users\<user>\AppData\Roaming\StudyBible\settings.json
+    /// - macOS: ~/Library/Application Support/StudyBible/settings.json
+    /// - Linux: ~/.config/StudyBible/settings.json
+    /// - Android: App-specific internal storage (no permissions needed)
     pub fn new() -> Result<Self, String> {
         let proj_dirs = ProjectDirs::from("com", "studybible", "StudyBible")
             .ok_or("Could not determine config directory")?;
 
-        let config_dir = proj_dirs.config_dir();
+        // For Android, prefer data_dir over config_dir (internal app storage)
+        let config_dir = if cfg!(target_os = "android") {
+            println!("🤖 Android detected: using data_dir for settings");
+            proj_dirs.data_dir()
+        } else {
+            proj_dirs.config_dir()
+        };
+
+        println!("📁 Config directory: {:?}", config_dir);
 
         // Create config directory if it doesn't exist
-        fs::create_dir_all(config_dir)
-            .map_err(|e| format!("Failed to create config directory: {}", e))?;
+        match fs::create_dir_all(config_dir) {
+            Ok(_) => println!("✓ Config directory created/verified"),
+            Err(e) => {
+                eprintln!("❌ Failed to create config directory: {}", e);
+                return Err(format!("Failed to create config directory: {}", e));
+            }
+        }
 
         let config_path = config_dir.join("settings.json");
+        println!("💾 Settings will be stored at: {:?}", config_path);
 
         Ok(Self { config_path })
     }
@@ -58,14 +72,31 @@ impl SettingsStorage {
 
     /// Save settings to disk
     pub fn save(&self, settings: &AppSettings) -> Result<(), String> {
+        println!("💾 Attempting to save settings...");
+
         let json = serde_json::to_string_pretty(settings)
-            .map_err(|e| format!("Failed to serialize settings: {}", e))?;
+            .map_err(|e| {
+                eprintln!("❌ Serialization failed: {}", e);
+                format!("Failed to serialize settings: {}", e)
+            })?;
 
-        fs::write(&self.config_path, json)
-            .map_err(|e| format!("Failed to write settings file: {}", e))?;
+        println!("📝 Serialized settings ({} bytes)", json.len());
 
-        println!("✓ Saved settings to: {:?}", self.config_path);
-        Ok(())
+        match fs::write(&self.config_path, &json) {
+            Ok(_) => {
+                println!("✓ Successfully saved settings to: {:?}", self.config_path);
+
+                // Verify the write
+                if let Ok(contents) = fs::read_to_string(&self.config_path) {
+                    println!("✓ Verified: file contains {} bytes", contents.len());
+                }
+                Ok(())
+            }
+            Err(e) => {
+                eprintln!("❌ Failed to write settings file: {} (path: {:?})", e, self.config_path);
+                Err(format!("Failed to write settings file: {}", e))
+            }
+        }
     }
 
     /// Get the path where settings are stored
