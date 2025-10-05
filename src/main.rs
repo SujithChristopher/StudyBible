@@ -8,6 +8,30 @@ mod components;
 use types::*;
 use services::*;
 use components::layout::{Header, Sidebar};
+use components::modals::SettingsModal;
+
+// Helper function to get theme class name
+fn get_theme_class(theme: &Theme) -> &'static str {
+    match theme {
+        Theme::Light => "theme-light",
+        Theme::Dark => "theme-dark dark",
+        Theme::Sepia => "theme-sepia",
+        Theme::Nord => "theme-nord dark",
+        Theme::Dracula => "theme-dracula dark",
+        Theme::Ocean => "theme-ocean dark",
+        Theme::Forest => "theme-forest dark",
+        Theme::Auto => "theme-light", // TODO: detect system preference
+    }
+}
+
+// Helper to get font family class
+fn get_font_class(font: &FontFamily) -> &'static str {
+    match font {
+        FontFamily::Sans => "font-sans",
+        FontFamily::Serif => "font-serif",
+        FontFamily::Mono => "font-mono",
+    }
+}
 
 fn main() {
     dioxus::launch(App);
@@ -15,12 +39,15 @@ fn main() {
 
 #[component]
 fn App() -> Element {
+    // Settings state (replaces individual theme/zoom/font signals)
+    let mut settings = use_signal(|| AppSettings::default());
+    let mut is_settings_open = use_signal(|| false);
+
     // Core app state
-    let mut is_dark_theme = use_signal(|| false);
     let mut is_sidebar_open = use_signal(|| true);
     let mut is_loading = use_signal(|| true);
     let mut load_error = use_signal(|| None::<String>);
-    
+
     // Bible data state
     let mut translations = use_signal(|| Vec::<Translation>::new());
     let mut books = use_signal(|| Vec::<Book>::new());
@@ -30,11 +57,9 @@ fn App() -> Element {
     let mut selected_chapter = use_signal(|| 1);
     let bookmarks = use_signal(|| Vec::<Bookmark>::new());
     let _highlights = use_signal(|| Vec::<TextHighlight>::new());
-    
+
     // UI state
-    let mut zoom_level = use_signal(|| 1.0);
     let mut is_parallel_view = use_signal(|| false);
-    let mut is_parallel_by_columns = use_signal(|| true);
     let mut secondary_translation = use_signal(|| None::<Translation>);
     let mut secondary_verses = use_signal(|| Vec::<Verse>::new());
     let mut search_query = use_signal(|| String::new());
@@ -167,19 +192,19 @@ fn App() -> Element {
         // Include CSS
         document::Link { rel: "stylesheet", href: asset!("assets/tailwind.css") }
         document::Link { rel: "stylesheet", href: asset!("assets/main.css") }
-        
-        // Dark mode scope wrapper so all children inherit `.dark`
+
+        // Theme and font wrapper
         div {
-            class: if *is_dark_theme.read() { "dark" } else { "" },
+            class: format!("{} {}", get_theme_class(&settings.read().theme), get_font_class(&settings.read().font_family)),
 
             // App root container
-            div { 
+            div {
                 class: "min-h-screen flex bg-primary text-primary theme-transition",
 
                 // Sidebar
                 Sidebar {
                 is_sidebar_open: *is_sidebar_open.read(),
-                is_dark: *is_dark_theme.read(),
+                is_dark: matches!(settings.read().theme, Theme::Dark | Theme::Nord | Theme::Dracula | Theme::Ocean | Theme::Forest),
                 books: books.read().clone(),
                 bookmarks: bookmarks.read().clone(),
                 translations: translations.read().clone(),
@@ -188,7 +213,7 @@ fn App() -> Element {
                 on_select_book: move |book: Book| on_book_select(book),
                 on_select_translation: move |id: String| on_translation_select(id),
                 on_open_bookmarks: move |_| {},
-                on_open_settings: move |_| {},
+                on_open_settings: move |_| is_settings_open.set(true),
                 on_toggle_sidebar: move |_| {
                     let current = *is_sidebar_open.read();
                     is_sidebar_open.set(!current)
@@ -297,10 +322,10 @@ fn App() -> Element {
                             }
                         }
                     },
-                    is_parallel_by_columns: *is_parallel_by_columns.read(),
+                    is_parallel_by_columns: settings.read().parallel_layout_columns,
                     on_toggle_parallel_layout: move |_| {
-                        let v = *is_parallel_by_columns.read();
-                        is_parallel_by_columns.set(!v);
+                        let v = settings.read().parallel_layout_columns;
+                        settings.write().parallel_layout_columns = !v;
                     },
                     selected_book: selected_book.read().clone(),
                     selected_chapter: *selected_chapter.read(),
@@ -379,18 +404,18 @@ fn App() -> Element {
                             }
                         }
                     },
-                    zoom_level: *zoom_level.read(),
+                    zoom_level: settings.read().zoom_level,
                     on_zoom_in: move |_| {
-                        let current = *zoom_level.read();
-                        zoom_level.set((current + 0.1).min(2.0));
+                        let current = settings.read().zoom_level;
+                        settings.write().zoom_level = (current + 0.1).min(2.0);
                     },
                     on_zoom_out: move |_| {
-                        let current = *zoom_level.read();
-                        zoom_level.set((current - 0.1).max(0.5));
+                        let current = settings.read().zoom_level;
+                        settings.write().zoom_level = (current - 0.1).max(0.5);
                     },
-                    on_reset_zoom: move |_| zoom_level.set(1.0),
-                    is_dark: *is_dark_theme.read(),
-                    set_is_dark: move |dark: bool| is_dark_theme.set(dark),
+                    on_reset_zoom: move |_| settings.write().zoom_level = 1.0,
+                    is_dark: matches!(settings.read().theme, Theme::Dark | Theme::Nord | Theme::Dracula | Theme::Ocean | Theme::Forest),
+                    set_is_dark: move |_dark: bool| {},
                     on_select_chapter: move |ch: u32| {
                         if let Some(book) = &*selected_book.read() {
                             if ch >= 1 && ch <= book.chapter_count {
@@ -453,7 +478,7 @@ fn App() -> Element {
                     main {
                         class: "flex-1 overflow-auto bg-secondary theme-transition",
                         div {
-                            class: format!("{} mx-auto p-8", if *is_parallel_view.read() && *is_parallel_by_columns.read() { "max-w-6xl" } else { "max-w-4xl" }),
+                            class: format!("{} mx-auto p-8", if *is_parallel_view.read() && settings.read().parallel_layout_columns { "max-w-6xl" } else { "max-w-4xl" }),
                             
                             if let Some(book) = &*selected_book.read() {
                                 div {
@@ -521,8 +546,8 @@ fn App() -> Element {
                                     }
                                     div {
                                         class: "space-y-4",
-                                        style: format!("font-size: {}rem; line-height: 1.6;", 1.125 * *zoom_level.read()),
-                                        if *is_parallel_view.read() && *is_parallel_by_columns.read() {
+                                        style: format!("font-size: {}px; line-height: {};", settings.read().font_size * settings.read().zoom_level, settings.read().line_height),
+                                        if *is_parallel_view.read() && settings.read().parallel_layout_columns {
                                             // Two columns: render row per verse so heights are aligned across columns
                                             div { class: "space-y-3",
                                                 for verse in verses.read().iter() {
@@ -547,7 +572,7 @@ fn App() -> Element {
                                                     }
                                                 }
                                             }
-                                        } else if *is_parallel_view.read() && !*is_parallel_by_columns.read() {
+                                        } else if *is_parallel_view.read() && !settings.read().parallel_layout_columns {
                                             // Rows: primary verse then secondary under it if available
                                             div { class: "space-y-4",
                                                 for verse in verses.read().iter() {
@@ -608,6 +633,17 @@ fn App() -> Element {
                         }
                     }
                 }
+                }
+
+                // Settings Modal
+                SettingsModal {
+                    is_open: *is_settings_open.read(),
+                    settings: settings.read().clone(),
+                    on_close: move |_| is_settings_open.set(false),
+                    on_save: move |new_settings: AppSettings| {
+                        settings.set(new_settings);
+                        // TODO: Save to persistent storage
+                    }
                 }
             }
         }

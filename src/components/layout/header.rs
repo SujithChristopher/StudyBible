@@ -288,21 +288,6 @@ pub fn Header(
                         }
                     }
 
-                    // Dark mode toggle
-                    button {
-                        class: format!("p-3 rounded-lg transition-colors {}",
-                            if is_dark {
-                                "bg-gray-800 hover:bg-gray-700"
-                            } else {
-                                "bg-gray-100 hover:bg-gray-200"
-                            }
-                        ),
-                        onclick: move |_| {
-                            set_is_dark.call(!is_dark);
-                        },
-                        title: if is_dark { "Switch to light mode" } else { "Switch to dark mode" },
-                        if is_dark { "☀️" } else { "🌙" }
-                    }
                 }
             }
         }

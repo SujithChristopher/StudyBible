@@ -1,1 +1,3 @@
-// Modal components will be added here
+mod settings;
+
+pub use settings::SettingsModal;

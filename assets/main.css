@@ -1,19 +1,36 @@
 /* StudyBible Custom CSS - works alongside Tailwind CSS */
 
+/* Font families */
+.font-sans {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.font-serif {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.font-mono {
+  font-family: 'Courier New', Courier, monospace;
+}
+
 /* Custom theme colors that extend Tailwind */
-:root {
+:root,
+.theme-light {
   /* Light theme */
   --bg-primary: #f9fafb;
-  --bg-secondary: #ffffff; 
+  --bg-secondary: #ffffff;
   --bg-tertiary: #f3f4f6;
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --text-tertiary: #6b7280;
   --border-primary: #e5e7eb;
   --border-secondary: #d1d5db;
+  --accent-primary: #3b82f6;
+  --accent-secondary: #eff6ff;
 }
 
-.dark {
+.dark,
+.theme-dark {
   --bg-primary: #111827;
   --bg-secondary: #1f2937;
   --bg-tertiary: #374151;
@@ -22,6 +39,73 @@
   --text-tertiary: #9ca3af;
   --border-primary: #4b5563;
   --border-secondary: #374151;
+  --accent-primary: #60a5fa;
+  --accent-secondary: #1e3a8a;
+}
+
+.theme-sepia {
+  --bg-primary: #f5f1e8;
+  --bg-secondary: #fefcf7;
+  --bg-tertiary: #ebe5d9;
+  --text-primary: #3d2817;
+  --text-secondary: #6b5d4f;
+  --text-tertiary: #8a7968;
+  --border-primary: #d4c4b0;
+  --border-secondary: #c4b5a3;
+  --accent-primary: #8b6914;
+  --accent-secondary: #fef3c7;
+}
+
+.theme-nord {
+  --bg-primary: #2e3440;
+  --bg-secondary: #3b4252;
+  --bg-tertiary: #434c5e;
+  --text-primary: #eceff4;
+  --text-secondary: #d8dee9;
+  --text-tertiary: #a8b1c4;
+  --border-primary: #4c566a;
+  --border-secondary: #434c5e;
+  --accent-primary: #88c0d0;
+  --accent-secondary: #5e81ac;
+}
+
+.theme-dracula {
+  --bg-primary: #282a36;
+  --bg-secondary: #44475a;
+  --bg-tertiary: #6272a4;
+  --text-primary: #f8f8f2;
+  --text-secondary: #e6e6e0;
+  --text-tertiary: #c0c0ba;
+  --border-primary: #6272a4;
+  --border-secondary: #44475a;
+  --accent-primary: #bd93f9;
+  --accent-secondary: #6272a4;
+}
+
+.theme-ocean {
+  --bg-primary: #0c4a6e;
+  --bg-secondary: #075985;
+  --bg-tertiary: #0e7490;
+  --text-primary: #f0f9ff;
+  --text-secondary: #bae6fd;
+  --text-tertiary: #7dd3fc;
+  --border-primary: #0e7490;
+  --border-secondary: #155e75;
+  --accent-primary: #06b6d4;
+  --accent-secondary: #164e63;
+}
+
+.theme-forest {
+  --bg-primary: #064e3b;
+  --bg-secondary: #065f46;
+  --bg-tertiary: #047857;
+  --text-primary: #ecfdf5;
+  --text-secondary: #a7f3d0;
+  --text-tertiary: #6ee7b7;
+  --border-primary: #047857;
+  --border-secondary: #059669;
+  --accent-primary: #10b981;
+  --accent-secondary: #064e3b;
 }
 
 /* Custom utility classes */

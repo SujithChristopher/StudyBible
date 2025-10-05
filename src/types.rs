@@ -181,6 +181,91 @@ impl HighlightColor {
     }
 }
 
+/// Available theme options
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum Theme {
+    Light,
+    Dark,
+    Sepia,
+    Nord,
+    Dracula,
+    Ocean,
+    Forest,
+    Auto,  // System preference
+}
+
+impl Default for Theme {
+    fn default() -> Self {
+        Theme::Light
+    }
+}
+
+/// Font family options
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum FontFamily {
+    Sans,
+    Serif,
+    Mono,
+}
+
+impl Default for FontFamily {
+    fn default() -> Self {
+        FontFamily::Sans
+    }
+}
+
+/// Verse number display style
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum VerseNumberStyle {
+    Badge,
+    Inline,
+    Hidden,
+}
+
+impl Default for VerseNumberStyle {
+    fn default() -> Self {
+        VerseNumberStyle::Badge
+    }
+}
+
+/// Application settings
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct AppSettings {
+    // Appearance
+    pub theme: Theme,
+    pub font_family: FontFamily,
+    pub font_size: f32,
+    pub line_height: f32,
+
+    // Reading
+    pub verse_number_style: VerseNumberStyle,
+    pub default_translation_id: Option<String>,
+    pub parallel_layout_columns: bool,
+
+    // UI
+    pub show_verse_badges: bool,
+    pub zoom_level: f32,
+}
+
+impl Default for AppSettings {
+    fn default() -> Self {
+        Self {
+            theme: Theme::Light,
+            font_family: FontFamily::Sans,
+            font_size: 18.0,
+            line_height: 1.6,
+            verse_number_style: VerseNumberStyle::Badge,
+            default_translation_id: None,
+            parallel_layout_columns: true,
+            show_verse_badges: true,
+            zoom_level: 1.0,
+        }
+    }
+}
+
 /// Reader preferences for customizing the reading experience
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ReaderPreferences {
