@@ -4,6 +4,7 @@ author = "StudyBible Team"
 
 [bundle]
 identifier = "com.studybible.app"
+icon = ["assets/icons/icon.png"]
 
 [bundle.macos]
 name = "StudyBible"

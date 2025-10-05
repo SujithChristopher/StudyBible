@@ -4,11 +4,13 @@ mod types;
 mod data;
 mod services;
 mod components;
+mod storage;
 
 use types::*;
 use services::*;
 use components::layout::{Header, Sidebar};
 use components::modals::SettingsModal;
+use storage::SettingsStorage;
 
 // Helper function to get theme class name
 fn get_theme_class(theme: &Theme) -> &'static str {
@@ -42,6 +44,15 @@ fn App() -> Element {
     // Settings state (replaces individual theme/zoom/font signals)
     let mut settings = use_signal(|| AppSettings::default());
     let mut is_settings_open = use_signal(|| false);
+    let storage = use_signal(|| SettingsStorage::new().ok());
+
+    // Load settings from disk on startup
+    use_effect(move || {
+        if let Some(store) = &*storage.read() {
+            let loaded_settings = store.load();
+            settings.set(loaded_settings);
+        }
+    });
 
     // Core app state
     let mut is_sidebar_open = use_signal(|| true);
@@ -641,8 +652,13 @@ fn App() -> Element {
                     settings: settings.read().clone(),
                     on_close: move |_| is_settings_open.set(false),
                     on_save: move |new_settings: AppSettings| {
-                        settings.set(new_settings);
-                        // TODO: Save to persistent storage
+                        settings.set(new_settings.clone());
+                        // Save to persistent storage
+                        if let Some(store) = &*storage.read() {
+                            if let Err(e) = store.save(&new_settings) {
+                                eprintln!("Failed to save settings: {}", e);
+                            }
+                        }
                     }
                 }
             }

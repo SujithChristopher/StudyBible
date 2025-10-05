@@ -392,11 +392,61 @@ pub fn SettingsModal(
                         div {
                             class: "space-y-6",
 
+                            // Storage Info
                             div {
-                                class: "p-4 bg-gray-50 dark:bg-gray-900 rounded-lg",
-                                p {
-                                    class: "text-sm text-gray-600 dark:text-gray-400",
-                                    "Advanced settings coming soon: bookmarks export/import, data management, and more."
+                                label {
+                                    class: "block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2",
+                                    "Storage Information"
+                                }
+                                div {
+                                    class: "p-4 bg-gray-50 dark:bg-gray-900 rounded-lg",
+                                    p {
+                                        class: "text-xs text-gray-600 dark:text-gray-400 mb-2",
+                                        "Settings are automatically saved to your system's configuration directory:"
+                                    }
+                                    p {
+                                        class: "text-xs font-mono text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 p-2 rounded break-all",
+                                        if cfg!(target_os = "windows") {
+                                            "%APPDATA%\\StudyBible\\settings.json"
+                                        } else if cfg!(target_os = "macos") {
+                                            "~/Library/Application Support/StudyBible/settings.json"
+                                        } else if cfg!(target_os = "android") {
+                                            "App-specific storage/settings.json"
+                                        } else {
+                                            "~/.config/StudyBible/settings.json"
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Coming Soon Features
+                            div {
+                                label {
+                                    class: "block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2",
+                                    "Coming Soon"
+                                }
+                                div {
+                                    class: "p-4 bg-gray-50 dark:bg-gray-900 rounded-lg space-y-2",
+                                    div {
+                                        class: "flex items-start gap-2",
+                                        span { class: "text-gray-400", "•" }
+                                        span { class: "text-sm text-gray-600 dark:text-gray-400", "Export/Import bookmarks" }
+                                    }
+                                    div {
+                                        class: "flex items-start gap-2",
+                                        span { class: "text-gray-400", "•" }
+                                        span { class: "text-sm text-gray-600 dark:text-gray-400", "Export/Import highlights" }
+                                    }
+                                    div {
+                                        class: "flex items-start gap-2",
+                                        span { class: "text-gray-400", "•" }
+                                        span { class: "text-sm text-gray-600 dark:text-gray-400", "Data synchronization" }
+                                    }
+                                    div {
+                                        class: "flex items-start gap-2",
+                                        span { class: "text-gray-400", "•" }
+                                        span { class: "text-sm text-gray-600 dark:text-gray-400", "Clear cache" }
+                                    }
                                 }
                             }
                         }
